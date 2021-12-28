@@ -1,5 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import * as React from 'react';
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Center from "../../lib/components/Center";
 import WhiteBox from "../../lib/components/WhiteBox"
 import Typography from "@mui/material/Typography"
@@ -16,7 +17,8 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import httpPostRequest from "../../lib/network/httpPostRequest"
 import type { NextPage } from 'next'
-import Head from 'next/head'
+import { organizationLogo, portalUrl } from '../../lib/system/settings';
+import { useRouter } from 'next/router';
 
 
 const Alert = React.forwardRef(function Alert(props, ref: any) {
@@ -33,7 +35,9 @@ const Home: NextPage = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [submittedLogin, setSubmittedLogin] = useState(false);
 
-    var login = (e: any)=>{
+    const router = useRouter();
+
+    var login = useCallback((_e: any)=>{
         setSubmittedLogin(true);
         let formdata = new FormData(document.getElementById("login-form") as HTMLFormElement);
         httpPostRequest(`${portalUrl}/api/login`,{
@@ -44,17 +48,19 @@ const Home: NextPage = () => {
 
             openSnackBar(true);
             
-            if (data.success){
+            if (!data.error){
                 setSnackbarSeverity("success");
                 setSnackBarContent(<div>Login successful</div>);
-                window.location.href = portalUrl;
+                localStorage.setItem("token",data.token);
+                router.push("/")
+        
             }else{
                 setSnackbarSeverity("error")
-                setSnackBarContent(<div>{ data.message }</div>)
+                setSnackBarContent(<div>{ data.error }</div>)
                 setSubmittedLogin(false);
             }
         })
-    }
+    },[router])
 
     useEffect(function(){
         document.onkeydown = (e)=>{
@@ -62,15 +68,15 @@ const Home: NextPage = () => {
                 login(e);
             }
         }
-    },[])
+    },[login])
 
     return (
-        <>
+        <div style={{ backgroundColor: "#eaeaea", minHeight:"100vh" }}>
             <Center style={{ minHeight: "90vh" }}>
-                <WhiteBox style={{ width: "250px", maxWidth: "80vw" }}>
-                    {/* <Center style={{ marginBottom: "10px" }}>
+                <WhiteBox style={{ width: "300px", maxWidth: "80vw" }}>
+                    <Center style={{ marginBottom: "10px" }}>
                         <img alt="Origanization Logo" src={ organizationLogo } style={{ height: "100px" }} />
-                    </Center> */}
+                    </Center>
 
                     <Center>
                         <Typography variant="h6" textAlign="center" style={{ marginBottom: "5px", maxWidth: "250px" }}>Human Resources Management System</Typography>
@@ -106,7 +112,7 @@ const Home: NextPage = () => {
                                 </InputAdornment>
                                 ,
                                 endAdornment:  <InputAdornment position="end"> 
-                                    <IconButton onClick={e=>{
+                                    <IconButton onClick={_e=>{
                                         setShowPassword(!showPassword);
                                     }}>
                                         {showPassword?<VisibilityOff color="action" />:<Visibility color="action" />}
@@ -126,14 +132,14 @@ const Home: NextPage = () => {
 
             <CircularPreloader isloading={ isLoading } title={ preloaderTitle } />
 
-            <Snackbar open={ snackBarIsOpened } autoHideDuration={6000} onClose={e=>{ openSnackBar(false) }} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+            <Snackbar open={ snackBarIsOpened } autoHideDuration={6000} onClose={_e=>{ openSnackBar(false) }} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
                 <
                 // @ts-ignore
-                Alert onClose={e=>{ openSnackBar(false) }} severity={ snackbarSeverity } sx={{ width: '100%' }}>
+                Alert onClose={_e=>{ openSnackBar(false) }} severity={ snackbarSeverity } sx={{ width: '100%' }}>
                     { snackBarContent }
                 </Alert>
             </Snackbar>
-        </>
+        </div>
     )
 }
 

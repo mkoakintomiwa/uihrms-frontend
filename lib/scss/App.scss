@@ -1,4 +1,26 @@
 
+$darkThemeColor:#001529;
+
+
+@mixin scrollbar{
+	&::-webkit-scrollbar {
+		width: 8px!important;
+		height: 6px!important;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+	
+    &::-webkit-scrollbar-thumb {
+		background-color: grey;
+		border-radius: 20px;
+	}
+	
+    &::-webkit-scrollbar-track {
+		background: white;
+	}
+}
+
 @mixin fullBackground{
     background: var(--background-image);
     background-repeat:repeat;
@@ -99,4 +121,15 @@ $rippleColor: white;
 
 .full-background{
 	@include fullBackground();
+}
+
+.sidebar{
+	background-color: $darkThemeColor;
+	height: calc(100vh - 50px);
+	max-height: calc(100vh - 50px); 
+	width: 300px; 
+	overflow-y: auto;
+	padding-bottom: 100px;
+
+	@include scrollbar();
 }

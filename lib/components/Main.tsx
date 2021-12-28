@@ -1,5 +1,6 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
+import Script from "next/script";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,7 +14,6 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import NotificationIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/MessageRounded';
 import httpPostRequest from "../network/httpPostRequest";
-import "../scss/App.scss"
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -36,6 +36,9 @@ import Dialog from "@mui/material/Dialog"
 import HtmlSelected from '../../lib/components/HtmlSelected';
 import { Menu, Button } from 'antd';
 import LogoutIcon from "@mui/icons-material/Logout"
+import { portalUrl } from "../system/settings";
+import catchAxiosError from "../network/catchAxiosError";
+import { useRouter } from "next/router";
 
 import {
     AppstoreOutlined,
@@ -47,48 +50,7 @@ import {
     MailOutlined,
   } from '@ant-design/icons';
 
-  const { SubMenu } = Menu;
-
-
-let topbarColor = "#29d"; 
-
-topbar.config({
-    autoRun      : true,
-    barThickness : 3,
-    barColors    : {
-        '0'      : topbarColor,
-        '.25'    : topbarColor,
-        '.50'    : topbarColor,
-        '.75'    : topbarColor,
-        '1.0'    : topbarColor
-    },
-    shadowBlur   : 10,
-    shadowColor  : 'rgba(0,   0,   0,   .6)',
-    className    : 'app-topbar'
-});
-
-// topbar.show();
-// //@ts-ignore
-// document.querySelector(".topbar").style.top = 50;
-// //$(".topbar").css("top",navbarHeight);
-// topbar.progress("0.7");
-// topbar.hide();
-
-
-window.onbeforeunload = function(){
-    
-    //if (platform.is_android()) Android.destroyAd();
-
-    //pp('show');
-    topbar.show();
-
-    setTimeout(function(){
-        //pp('hide');
-        topbar.hide();
-    },30000);
-
-
-};
+const { SubMenu } = Menu;
 
 
 export default function(props: MainProps){
@@ -117,39 +79,145 @@ export default function(props: MainProps){
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
 
+    const [mainContent, setMainContent] = useState(<div></div>);
+
+    const router = useRouter();
+
+    let darkThemeColor = "#001529";
+
      
     useEffect(()=>{
-        // httpPostRequest(`${api}/menu-items`,{
-        //     "uid": user.uid,
-        //     "branch": user.branch
-        // }).then(response=>{
-        //     document.getElementById("preloader").style.display = "none";
 
-        //     httpPostRequest(`${api}/school-branches`).then(response=>{
-        //         setSchoolBranches(response.data);
-        //     });
+        let topbarColor = "#29d"; 
+
+        topbar.config({
+            autoRun      : true,
+            barThickness : 3,
+            barColors    : {
+                '0'      : topbarColor,
+                '.25'    : topbarColor,
+                '.50'    : topbarColor,
+                '.75'    : topbarColor,
+                '1.0'    : topbarColor
+            },
+            shadowBlur   : 10,
+            shadowColor  : 'rgba(0,   0,   0,   .6)',
+            className    : 'app-topbar'
+        });
+
+        topbar.show();
+        //@ts-ignore
+        //document.querySelector(".app-topbar").style.top = 50;
+        //$(".topbar").css("top",navbarHeight);
+        topbar.progress("0.7");
+        topbar.hide();
+
+
+        window.onbeforeunload = function(){
             
-        //     let showBackgroundImage = typeof props.showBackgroundImage != "undefined" ? props.showBackgroundImage : true;
+            //if (platform.is_android()) Android.destroyAd();
 
-        //     if (showBackgroundImage){
-        //         document.body.classList.add("full-background");
-        //     }
-        //     setMenuItems(response.data);
+            //pp('show');
+            topbar.show();
 
-        //     // let pws = new PersistentWebSocket(`${websockets}/new-notifications`);
+            setTimeout(function(){
+                //pp('hide');
+                topbar.hide();
+            },30000);
 
-        //     // pws.onopen = function(){
-        //     //     pws.websocket.send(AppWebSocket.jsonRequest({
-        //     //         uid: user.uid
-        //     //     }));
-        //     // }
+        };
 
-        //     // pws.onmessage = function(message){
-        //     //     setNewNotificationsData(AppWebSocket.data(message));
-        //     // }
-            
-        //     // pws.start();
-        // })
+
+        httpPostRequest(`${portalUrl}/api/login-status`).then(response=>{
+            if (response.data.isLoggedIn){
+                setMainContent(
+                    Object.keys({'l':'k'}).length > 0?
+                    
+                        
+                        <Box sx={{ flexGrow: 1 }}>
+                            <div className="sidebar">
+                                <Menu
+                                    defaultSelectedKeys={['12']}
+                                    defaultOpenKeys={['sub1','sub2']}
+                                    mode="inline"
+                                    theme="dark"
+                                    inlineCollapsed={ false }
+                                    >
+                                    <Menu.Item key="1" icon={<PieChartOutlined />}>
+                                        Option 1
+                                    </Menu.Item>
+                                    <Menu.Item key="2" icon={<DesktopOutlined />}>
+                                        Option 2
+                                    </Menu.Item>
+                                    <Menu.Item key="3" icon={<ContainerOutlined />}>
+                                        Option 3
+                                    </Menu.Item>
+                                    <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
+                                        <Menu.Item key="5">Option 5</Menu.Item>
+                                        <Menu.Item key="6">Option 6</Menu.Item>
+                                        <Menu.Item key="7">Option 7</Menu.Item>
+                                        <Menu.Item key="8">Option 8</Menu.Item>
+                                    </SubMenu>
+                                    <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Navigation Two">
+                                        <Menu.Item key="9">Option 9</Menu.Item>
+                                        <Menu.Item key="10">Option 10</Menu.Item>
+                                        <SubMenu key="sub3" title="Submenu">
+                                        <Menu.Item key="11">Option 11</Menu.Item>
+                                        <Menu.Item key="12">Option 12</Menu.Item>
+                                        </SubMenu>
+                                    </SubMenu>
+                                </Menu>
+                                
+                                <Box sx={{ position: "fixed", bottom: 0, backgroundColor: darkThemeColor }}>
+                                    <Divider sx={{ backgroundColor: "white" }} />
+                                    
+                                    <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
+                                        localStorage.removeItem("token");
+                                        router.push("users/login");
+                                    }}>
+                                        <SpaceBetween style={{ fontSize: "14px" }}>
+                                            <div>Log out</div>
+                                            <LogoutIcon />
+                                        </SpaceBetween>
+                                    </MuiButton>
+                                </Box>
+                                
+                            </div>
+        
+                            <div className="no-navbar" style={{ marginTop: "50px" }}>
+                                { props.children }
+                            </div>
+                            
+                            <SwipeableDrawer
+                                anchor= { swipeableDrawerAnchor }
+                                open={ swipeableDrawerIsVisible }
+                                onClose={e=>{
+                                    showSwipeableDrawer(false)
+                                }}
+                                onOpen={e=>{
+                                    showSwipeableDrawer(true)
+                                }}
+                            >
+                                { swipeableDrawerContent }
+                            </SwipeableDrawer>
+        
+                            <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
+        
+                            <Dialog open={ modalIsOpened }>
+                                { modalContent }
+                            </Dialog>
+                        
+                        </Box>   
+        
+                    :<div></div>
+                )
+            }else{
+                router.push("users/login");
+            }
+        }).catch(error=>{
+            catchAxiosError(error);
+        });
+
     },[]);
 
 
@@ -256,92 +324,14 @@ export default function(props: MainProps){
     }
 
     return(
-        Object.keys({'l':'k'}).length > 0?
-        
-            
-            <Box sx={{ flexGrow: 1 }}>
-                <div style={{ height: "100vh", maxHeight: "100vh", width: "300px", backgroundColor: "white", overflowY: "auto", paddingBottom: "100px" }}>
-                    <Menu
-                        defaultSelectedKeys={['12']}
-                        defaultOpenKeys={['sub1','sub2']}
-                        mode="inline"
-                        theme="light"
-                        inlineCollapsed={ false }
-                        >
-                        <Menu.Item key="1" icon={<PieChartOutlined />}>
-                            Option 1
-                        </Menu.Item>
-                        <Menu.Item key="2" icon={<DesktopOutlined />}>
-                            Option 2
-                        </Menu.Item>
-                        <Menu.Item key="3" icon={<ContainerOutlined />}>
-                            Option 3
-                        </Menu.Item>
-                        <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
-                            <Menu.Item key="5">Option 5</Menu.Item>
-                            <Menu.Item key="6">Option 6</Menu.Item>
-                            <Menu.Item key="7">Option 7</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                            <Menu.Item key="8">Option 8</Menu.Item>
-                        </SubMenu>
-                        <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Navigation Two">
-                            <Menu.Item key="9">Option 9</Menu.Item>
-                            <Menu.Item key="10">Option 10</Menu.Item>
-                            <SubMenu key="sub3" title="Submenu">
-                            <Menu.Item key="11">Option 11</Menu.Item>
-                            <Menu.Item key="12">Option 12</Menu.Item>
-                            </SubMenu>
-                        </SubMenu>
-                    </Menu>
+        <>
 
-                    
-                    <Box sx={{ position: "fixed", bottom: 0, backgroundColor: '#d32f2f' }}>
-                        <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px" }}>
-                            <SpaceBetween>
-                                <div>Log out</div>
-                                <LogoutIcon />
-                            </SpaceBetween>
-                        </MuiButton>
-                    </Box>
-                    
-                </div>
+        {/* <Script src="/static/topbar/topbar.min.js" strategy="beforeInteractive" />
 
-                <div className="no-navbar" style={{ marginTop: "50px" }}>
-                    { props.children }
-                </div>
-                
-                <SwipeableDrawer
-                    anchor= { swipeableDrawerAnchor }
-                    open={ swipeableDrawerIsVisible }
-                    onClose={e=>{
-                        showSwipeableDrawer(false)
-                    }}
-                    onOpen={e=>{
-                        showSwipeableDrawer(true)
-                    }}
-                >
-                    { swipeableDrawerContent }
-                </SwipeableDrawer>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/antd/4.17.4/antd.min.css' integrity='sha512-MIam2KgzIIyxRmfAqAM8+3pvkqhSqtHQVjlFx9v3SwfNPXgB6OW/LHtjWlfj4r5AtgOlLdn2ip7Yb2ndyP7KEQ==' crossOrigin='anonymous' referrerPolicy='no-referrer' /> */}
 
-                <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
-
-                <Dialog open={ modalIsOpened }>
-                    { modalContent }
-                </Dialog>
-            
-            </Box>
-
-        :<div></div>
+        { mainContent }
+    </>
     );
 }
 
