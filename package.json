@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export && rm -rf ../uihrms-frontend-build/* && cp -r out/* ../uihrms-frontend-build && cp -r public/.htaccess uihrms-frontend-build && cd ../uihrms-frontend-build && git add . && git commit -m \"Auto Commit\" && git push origin master",
+    "build": "next build && next export && rm -rf ../uihrms-frontend-build/* && cp -r out/* ../uihrms-frontend-build && cp -r public/.htaccess ../uihrms-frontend-build && cd ../uihrms-frontend-build && git add . && git commit -m \"Auto Commit\" && git push origin master",
     "start": "next start",
     "lint": "next lint"
   },

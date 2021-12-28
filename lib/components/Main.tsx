@@ -143,7 +143,9 @@ export default function(props: MainProps){
                                     theme="dark"
                                     inlineCollapsed={ false }
                                     >
-                                    <Menu.Item key="1" icon={<PieChartOutlined />}>
+                                    <Menu.Item key="1" icon={<PieChartOutlined />} onClick={e=>{
+                                        router.push("/users/34as8363oe9032a");
+                                    }}>
                                         Option 1
                                     </Menu.Item>
                                     <Menu.Item key="2" icon={<DesktopOutlined />}>
