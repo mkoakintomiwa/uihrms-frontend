@@ -39,6 +39,8 @@ import LogoutIcon from "@mui/icons-material/Logout"
 import { api, portalUrl } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
+import Center from "./Center";
+import PageSpinner from "./PageSpinner";
 
 import {
     AppstoreOutlined,
@@ -79,7 +81,9 @@ export default function(props: MainProps){
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
 
-    const [mainContent, setMainContent] = useState(<div></div>);
+    const [mainContent, setMainContent] = useState(<Center fullscreen>
+        <PageSpinner />
+    </Center>);
 
     const router = useRouter();
 
@@ -157,7 +161,7 @@ export default function(props: MainProps){
                                             let submenu = menu.submenu;
                                             
                                             menuItemElement = (
-                                                <SubMenu key={`menu-${roleId}`} icon={<MailOutlined />} title={menu.title}>
+                                                <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title}>
                                                     {Object.keys(submenu).map((submenuRoleId: string)=>{
                                                         let submenuRole = submenu[submenuRoleId];
                                                         
@@ -169,7 +173,7 @@ export default function(props: MainProps){
                                             )
                                         }else{
                                             menuItemElement = ( 
-                                                <Menu.Item key={`menu-${roleId}`} icon={<PieChartOutlined />} onClick={e=>{
+                                                <Menu.Item key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
                                                     router.push("/users/34as8363oe9032a");
                                                 }}>
                                                     { menu.title }
@@ -358,16 +362,18 @@ export default function(props: MainProps){
 function AppIcon(icon: AppIcon){
     let appIcon: JSX.Element = <div></div>;
 
-    if (["fas","fab"].includes(icon.type)){
-        appIcon = <FontAwesomeIcon icon={[icon.type, icon.class]} />
-    }
+    if (typeof icon != "undefined"){
+        if (["fas","fab"].includes(icon.type)){
+            appIcon = <FontAwesomeIcon icon={[icon.type, icon.class]} />
+        }
 
-    if (icon.type === "link"){
-        appIcon = <img style={{
-            maxWidth: "20px",
-            height: "16px",
-            margin: "0px 5px"
-        }} src={ icon.url } />
+        if (icon.type === "link"){
+            appIcon = <img style={{
+                maxWidth: "20px",
+                height: "16px",
+                margin: "0px 5px"
+            }} src={ icon.url } />
+        }
     }
 
     return appIcon;

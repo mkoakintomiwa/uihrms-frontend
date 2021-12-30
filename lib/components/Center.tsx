@@ -1,7 +1,16 @@
 import * as React from "react"
 
-export default (props: ContainerProps)=>{    
+export default function Center(props: ContainerProps){    
     let style = { display: "flex", justifyContent: "center", alignItems: "center", ...props.style }
+
+    if (props.fullscreen){
+        style = {
+            ...style,
+            width: "100vw",
+            height: "100vh"
+        }
+    }
+
     return(
         <div style={style}>
             {props.children}
@@ -15,5 +24,7 @@ interface ContainerProps{
 
     children?: any;
 
-    style?: React.CSSProperties
+    style?: React.CSSProperties;
+
+    fullscreen?: boolean;
 }
