@@ -34,13 +34,13 @@ import Badge from '@mui/material/Badge';
 import CircularPreloader from '../../lib/components/CircularPreloader';
 import Dialog from "@mui/material/Dialog"
 import HtmlSelected from '../../lib/components/HtmlSelected';
-import { Menu, Button } from 'antd';
+import { Menu, Button, Layout } from 'antd';
 import LogoutIcon from "@mui/icons-material/Logout"
-import { api, portalUrl } from "../system/settings";
+import { api, portalUrl, titleSuffix } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 import Center from "./Center";
-import PageSpinner from "./PageSpinner";
+import PagePreloader from "./PagePreloader";
 
 import {
     AppstoreOutlined,
@@ -53,6 +53,7 @@ import {
   } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
+const { Header, Content, Footer, Sider } = Layout;
 
 
 export default function(props: MainProps){
@@ -76,14 +77,10 @@ export default function(props: MainProps){
     const [circularPreloaderTitle, setCircularPreloaderTitle] = useState("");
 	const [circularPreloaderIsOpened, showCircularPreloader] = useState(false);
 
-    const [schoolBranches, setSchoolBranches] = useState([]);
-
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
 
-    const [mainContent, setMainContent] = useState(<Center fullscreen>
-        <PageSpinner />
-    </Center>);
+    const [mainContent, setMainContent] = useState(<PagePreloader />);
 
     const router = useRouter();
 
@@ -92,22 +89,7 @@ export default function(props: MainProps){
      
     useEffect(()=>{
 
-        let topbarColor = "#29d"; 
-
-        topbar.config({
-            autoRun      : true,
-            barThickness : 3,
-            barColors    : {
-                '0'      : topbarColor,
-                '.25'    : topbarColor,
-                '.50'    : topbarColor,
-                '.75'    : topbarColor,
-                '1.0'    : topbarColor
-            },
-            shadowBlur   : 10,
-            shadowColor  : 'rgba(0,   0,   0,   .6)',
-            className    : 'app-topbar'
-        });
+        topbar.hide();
 
         //topbar.show();
         //@ts-ignore
@@ -133,16 +115,18 @@ export default function(props: MainProps){
 
 
         httpPostRequest(`${api}/login-status`).then(response=>{
-            if (response.data.isLoggedIn){
-                
+            let user = response.data; 
+            if (user.isLoggedIn){
+                //document.title = `${user.name} | ${titleSuffix}`;
                 httpPostRequest(`${api}/menu-items`).then(response=>{
                     let menuItems = response.data;
                     
                     setMainContent(
                         Object.keys(menuItems).length > 0?
               
-                            <Box sx={{ flexGrow: 1 }}>
-                                <div className="sidebar">
+                            <Layout>
+                                
+                                <Sider className="sidebar site-layout-background" width={ 300 }>
 
                                     <Menu
                                         defaultSelectedKeys={['12']}
@@ -165,7 +149,13 @@ export default function(props: MainProps){
                                                     {Object.keys(submenu).map((submenuRoleId: string)=>{
                                                         let submenuRole = submenu[submenuRoleId];
                                                         
-                                                        return <Menu.Item key={`submenu-${submenuRoleId}`}>
+                                                        return <Menu.Item key={`submenu-${submenuRoleId}`} onClick={e=>{
+                                                            if (submenuRole.route){
+                                                                topbar.show();
+                                                                router.push(submenuRole.route);
+                                                                topbar.hide();
+                                                            }
+                                                        }}>
                                                             { submenuRole.title }
                                                         </Menu.Item>
                                                     })}
@@ -174,7 +164,9 @@ export default function(props: MainProps){
                                         }else{
                                             menuItemElement = ( 
                                                 <Menu.Item key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
-                                                    router.push("/users/34as8363oe9032a");
+                                                    if (menu.route){
+                                                        router.push(menu.route);
+                                                    }
                                                 }}>
                                                     { menu.title }
                                                 </Menu.Item>
@@ -188,11 +180,12 @@ export default function(props: MainProps){
                                         <Divider sx={{ backgroundColor: "white" }} />
                                         
                                         <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
-                                            topbar.show();
+                                            
+                                            setMainContent(<PagePreloader />);
+                                            
                                             httpPostRequest(`${api}/logout`).then(response=>{
                                                 localStorage.removeItem("token");
                                                 router.push("users/login");
-                                                topbar.hide();
                                             });
                                         }}>
                                             <SpaceBetween style={{ fontSize: "14px" }}>
@@ -202,11 +195,11 @@ export default function(props: MainProps){
                                         </MuiButton>
                                     </Box>
                                     
-                                </div>
+                                </Sider>
             
-                                <div className="no-navbar" style={{ marginTop: "50px" }}>
+                                <Content  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto" }}>
                                     { props.children }
-                                </div>
+                                </Content>
                                 
                                 <SwipeableDrawer
                                     anchor= { swipeableDrawerAnchor }
@@ -227,7 +220,7 @@ export default function(props: MainProps){
                                     { modalContent }
                                 </Dialog>
                             
-                            </Box>   
+                            </Layout>   
             
                         :<div></div>
                     )

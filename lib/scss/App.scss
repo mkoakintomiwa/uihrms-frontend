@@ -133,3 +133,8 @@ $rippleColor: white;
 
 	@include scrollbar();
 }
+
+
+.overflow-scroll{
+	@include scrollbar();
+}

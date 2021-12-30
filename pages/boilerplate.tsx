@@ -2,13 +2,12 @@ import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
 import Main from '../lib/components/Main'
 import Head from '../lib/system/PageHead'
-import { titleSuffix } from '../lib/system/settings'
 
-const Home: NextPage = () => {
+const Page: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>Dashboard | { titleSuffix }</title>
+				<title>Hamdan katheroo</title>
 			</Head>
 
 			<Main>
@@ -18,4 +17,4 @@ const Home: NextPage = () => {
 	)
 }
 
-export default Home
+export default Page;

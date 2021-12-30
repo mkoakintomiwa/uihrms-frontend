@@ -2,17 +2,11 @@ declare var documentRoot: string;
 
 declare var relDirname: string;
 
-declare var portalUrl: string;
-
-declare var organizationLogo: string;
-
 declare var ajax: string;
 
 declare var api: string;
 
 declare var user: User;
-
-declare var themeColor: string;
 
 declare var websockets: string;
 

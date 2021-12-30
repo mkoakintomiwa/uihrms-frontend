@@ -5,9 +5,9 @@ export default function Center(props: ContainerProps){
 
     if (props.fullscreen){
         style = {
-            ...style,
             width: "100vw",
-            height: "100vh"
+            height: "100vh",
+            ...style
         }
     }
 
