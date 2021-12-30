@@ -36,7 +36,7 @@ import Dialog from "@mui/material/Dialog"
 import HtmlSelected from '../../lib/components/HtmlSelected';
 import { Menu, Button } from 'antd';
 import LogoutIcon from "@mui/icons-material/Logout"
-import { portalUrl } from "../system/settings";
+import { api, portalUrl } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 
@@ -105,114 +105,130 @@ export default function(props: MainProps){
             className    : 'app-topbar'
         });
 
-        topbar.show();
+        //topbar.show();
         //@ts-ignore
         //document.querySelector(".app-topbar").style.top = 50;
         //$(".topbar").css("top",navbarHeight);
-        topbar.progress("0.7");
-        topbar.hide();
+        // topbar.progress("0.7");
+        // topbar.hide();
 
 
-        window.onbeforeunload = function(){
+        // window.onbeforeunload = function(){
             
-            //if (platform.is_android()) Android.destroyAd();
+        //     //if (platform.is_android()) Android.destroyAd();
 
-            //pp('show');
-            topbar.show();
+        //     //pp('show');
+        //     topbar.show();
 
-            setTimeout(function(){
-                //pp('hide');
-                topbar.hide();
-            },30000);
+        //     setTimeout(function(){
+        //         //pp('hide');
+        //         topbar.hide();
+        //     },30000);
 
-        };
+        // };
 
 
-        httpPostRequest(`${portalUrl}/api/login-status`).then(response=>{
+        httpPostRequest(`${api}/login-status`).then(response=>{
             if (response.data.isLoggedIn){
-                setMainContent(
-                    Object.keys({'l':'k'}).length > 0?
+                
+                httpPostRequest(`${api}/menu-items`).then(response=>{
+                    let menuItems = response.data;
                     
-                        
-                        <Box sx={{ flexGrow: 1 }}>
-                            <div className="sidebar">
-                                <Menu
-                                    defaultSelectedKeys={['12']}
-                                    defaultOpenKeys={['sub1','sub2']}
-                                    mode="inline"
-                                    theme="dark"
-                                    inlineCollapsed={ false }
+                    setMainContent(
+                        Object.keys(menuItems).length > 0?
+              
+                            <Box sx={{ flexGrow: 1 }}>
+                                <div className="sidebar">
+
+                                    <Menu
+                                        defaultSelectedKeys={['12']}
+                                        defaultOpenKeys={['sub1','sub2']}
+                                        mode="inline"
+                                        theme="dark"
+                                        inlineCollapsed={ false }
                                     >
-                                    <Menu.Item key="1" icon={<PieChartOutlined />} onClick={e=>{
-                                        router.push("/users/34as8363oe9032a");
-                                    }}>
-                                        Option 1
-                                    </Menu.Item>
-                                    <Menu.Item key="2" icon={<DesktopOutlined />}>
-                                        Option 2
-                                    </Menu.Item>
-                                    <Menu.Item key="3" icon={<ContainerOutlined />}>
-                                        Option 3
-                                    </Menu.Item>
-                                    <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
-                                        <Menu.Item key="5">Option 5</Menu.Item>
-                                        <Menu.Item key="6">Option 6</Menu.Item>
-                                        <Menu.Item key="7">Option 7</Menu.Item>
-                                        <Menu.Item key="8">Option 8</Menu.Item>
-                                    </SubMenu>
-                                    <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Navigation Two">
-                                        <Menu.Item key="9">Option 9</Menu.Item>
-                                        <Menu.Item key="10">Option 10</Menu.Item>
-                                        <SubMenu key="sub3" title="Submenu">
-                                        <Menu.Item key="11">Option 11</Menu.Item>
-                                        <Menu.Item key="12">Option 12</Menu.Item>
-                                        </SubMenu>
-                                    </SubMenu>
-                                </Menu>
-                                
-                                <Box sx={{ position: "fixed", bottom: 0, backgroundColor: darkThemeColor }}>
-                                    <Divider sx={{ backgroundColor: "white" }} />
+
+                                    {Object.keys(menuItems).map((roleId: string)=>{
+                                        let menu = menuItems[roleId];
+                                        
+                                        let menuItemElement: JSX.Element; 
+                                        
+                                        if (typeof menu.submenu != "undefined"){
+                                            let submenu = menu.submenu;
+                                            
+                                            menuItemElement = (
+                                                <SubMenu key={`menu-${roleId}`} icon={<MailOutlined />} title={menu.title}>
+                                                    {Object.keys(submenu).map((submenuRoleId: string)=>{
+                                                        let submenuRole = submenu[submenuRoleId];
+                                                        
+                                                        return <Menu.Item key={`submenu-${submenuRoleId}`}>
+                                                            { submenuRole.title }
+                                                        </Menu.Item>
+                                                    })}
+                                                </SubMenu>
+                                            )
+                                        }else{
+                                            menuItemElement = ( 
+                                                <Menu.Item key={`menu-${roleId}`} icon={<PieChartOutlined />} onClick={e=>{
+                                                    router.push("/users/34as8363oe9032a");
+                                                }}>
+                                                    { menu.title }
+                                                </Menu.Item>
+                                            );
+                                        }
+                                        return menuItemElement;
+                                    })}
+                                    </Menu>
                                     
-                                    <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
-                                        localStorage.removeItem("token");
-                                        router.push("users/login");
-                                    }}>
-                                        <SpaceBetween style={{ fontSize: "14px" }}>
-                                            <div>Log out</div>
-                                            <LogoutIcon />
-                                        </SpaceBetween>
-                                    </MuiButton>
-                                </Box>
+                                    <Box sx={{ position: "fixed", bottom: 0, backgroundColor: darkThemeColor }}>
+                                        <Divider sx={{ backgroundColor: "white" }} />
+                                        
+                                        <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
+                                            topbar.show();
+                                            httpPostRequest(`${api}/logout`).then(response=>{
+                                                localStorage.removeItem("token");
+                                                router.push("users/login");
+                                                topbar.hide();
+                                            });
+                                        }}>
+                                            <SpaceBetween style={{ fontSize: "14px" }}>
+                                                <div>Log out</div>
+                                                <LogoutIcon />
+                                            </SpaceBetween>
+                                        </MuiButton>
+                                    </Box>
+                                    
+                                </div>
+            
+                                <div className="no-navbar" style={{ marginTop: "50px" }}>
+                                    { props.children }
+                                </div>
                                 
-                            </div>
-        
-                            <div className="no-navbar" style={{ marginTop: "50px" }}>
-                                { props.children }
-                            </div>
+                                <SwipeableDrawer
+                                    anchor= { swipeableDrawerAnchor }
+                                    open={ swipeableDrawerIsVisible }
+                                    onClose={e=>{
+                                        showSwipeableDrawer(false)
+                                    }}
+                                    onOpen={e=>{
+                                        showSwipeableDrawer(true)
+                                    }}
+                                >
+                                    { swipeableDrawerContent }
+                                </SwipeableDrawer>
+            
+                                <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
+            
+                                <Dialog open={ modalIsOpened }>
+                                    { modalContent }
+                                </Dialog>
                             
-                            <SwipeableDrawer
-                                anchor= { swipeableDrawerAnchor }
-                                open={ swipeableDrawerIsVisible }
-                                onClose={e=>{
-                                    showSwipeableDrawer(false)
-                                }}
-                                onOpen={e=>{
-                                    showSwipeableDrawer(true)
-                                }}
-                            >
-                                { swipeableDrawerContent }
-                            </SwipeableDrawer>
-        
-                            <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
-        
-                            <Dialog open={ modalIsOpened }>
-                                { modalContent }
-                            </Dialog>
-                        
-                        </Box>   
-        
-                    :<div></div>
-                )
+                            </Box>   
+            
+                        :<div></div>
+                    )
+                });
+
             }else{
                 router.push("users/login");
             }

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import * as React from 'react';
 import { useState, useEffect, useCallback } from "react"
 import Center from "../../lib/components/Center";
@@ -16,9 +17,8 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import httpPostRequest from "../../lib/network/httpPostRequest"
 import type { NextPage } from 'next'
-import { organizationLogo, organizationLogoAspectRatio, portalUrl } from '../../lib/system/settings';
+import { organizationLogo, portalUrl } from '../../lib/system/settings';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 
 
 const Alert = React.forwardRef(function Alert(props, ref: any) {
@@ -38,8 +38,10 @@ const Home: NextPage = () => {
     const router = useRouter();
 
     var login = useCallback((_e: any)=>{
+        topbar.show();
         setSubmittedLogin(true);
         let formdata = new FormData(document.getElementById("login-form") as HTMLFormElement);
+        
         httpPostRequest(`${portalUrl}/api/login`,{
             "username": formdata.get("username"),
             "password": formdata.get("password")
@@ -59,6 +61,7 @@ const Home: NextPage = () => {
                 setSnackBarContent(<div>{ data.error }</div>)
                 setSubmittedLogin(false);
             }
+            topbar.hide();
         })
     },[router])
 
@@ -70,14 +73,12 @@ const Home: NextPage = () => {
         }
     },[login])
 
-
-
     return (
         <div style={{ backgroundColor: "#eaeaea", minHeight:"100vh" }}>
             <Center style={{ minHeight: "90vh" }}>
                 <WhiteBox style={{ width: "300px", maxWidth: "80vw" }}>
                     <Center style={{ marginBottom: "10px" }}>
-                        <Image alt="Origanization Logo" src={ organizationLogo } height="100px" width={`${organizationLogoAspectRatio * 100}px`} />
+                        <img alt="Origanization Logo" src={ organizationLogo } style={{ height: "100px" }} />
                     </Center>
 
                     <Center>
