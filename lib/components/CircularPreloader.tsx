@@ -3,7 +3,7 @@ import CircularProgress  from "@mui/material/CircularProgress"
 import Dialog from "@mui/material/Dialog"
 import Center from "../components/Center"
 
-export default (props: ContainerProps)=>{    
+export default function CircularPreloader(props: ContainerProps){    
     
     return(
         <Dialog open={ props.isloading }>
