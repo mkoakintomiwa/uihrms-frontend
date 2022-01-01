@@ -4,6 +4,7 @@ import Main from '../lib/components/Main'
 import Head from '../lib/system/PageHead'
 import { titleSuffix } from '../lib/system/settings'
 import Typography from '@mui/material/Typography'
+import WhiteBox from '../lib/components/WhiteBox'
 
 const Page: NextPage = () => {
 	return (
@@ -13,8 +14,10 @@ const Page: NextPage = () => {
 			</Head>
 
 			<Main>
-                <Typography variant='h4'>Users</Typography>
-                <div style={{ height: "1000vh" }}></div>
+                <WhiteBox style={{ width: "300px" }}>  
+                    <Typography variant='h4'>Users</Typography>
+                    <div style={{ height: "1000vh" }}></div>
+                </WhiteBox>
 			</Main>
 		</>
 	)

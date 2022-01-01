@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import Script from "next/script";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -34,13 +34,16 @@ import Badge from '@mui/material/Badge';
 import CircularPreloader from '../../lib/components/CircularPreloader';
 import Dialog from "@mui/material/Dialog"
 import HtmlSelected from '../../lib/components/HtmlSelected';
-import { Menu, Button, Layout } from 'antd';
+// import { Menu, Button, Layout } from 'antd';
+import { Layout } from "antd";
 import LogoutIcon from "@mui/icons-material/Logout"
 import { api, portalUrl, titleSuffix } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 import Center from "./Center";
 import PagePreloader from "./PagePreloader";
+import { ProSidebar, Menu, MenuItem, SubMenu, SidebarFooter } from 'react-pro-sidebar';
+import { AppContext } from "../context/AppContext";
 
 import {
     AppstoreOutlined,
@@ -51,12 +54,17 @@ import {
     ContainerOutlined,
     MailOutlined,
   } from '@ant-design/icons';
+import Flex from "./Flex";
+import addClassName from "../dom/addClassName";
 
-const { SubMenu } = Menu;
+// const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
 
 export default function(props: MainProps){
+
+    let pagePadding =  typeof props.pagePadding != "undefined" ? props.pagePadding : true;
+
     const [menuItems, setMenuItems] = useState({});
     const [menuDropdownIsVisible, showMenuDropdown] = useState(false);
     const [menuDropdownClientX, setmenuDropdownClientX] = useState(0);
@@ -80,7 +88,226 @@ export default function(props: MainProps){
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
 
-    const [mainContent, setMainContent] = useState(<PagePreloader />);
+    const { contextValue, setContextValue} = useContext(AppContext);
+
+
+    var firstPaintContent = (user: any,menuItems: any)=>{
+        return (
+            Object.keys(menuItems).length > 0?
+        
+            <div style={{ display: "flex" }}>
+
+                <ProSidebar className="sidebar">
+                    <Menu className="sidebar-width" iconShape="circle">
+                        
+                        <MenuItem icon={AppIcon({
+                            type: "fas",
+                            class: "gauge"
+                        })} onClick={e=>{
+                            router.push("/");
+                        }}>Dashboard</MenuItem>
+
+
+                        {Object.keys(menuItems).map((roleId: string)=>{
+                            let menu = menuItems[roleId];
+                            
+                            let menuItemElement: JSX.Element; 
+                            
+                            if (typeof menu.submenu != "undefined"){
+                                let submenu = menu.submenu;
+                                
+                                menuItemElement = (
+                                    <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title} onOpenChange={isOpened=>{
+                                        if (!contextValue.sidebarState) contextValue.sidebarState = {};
+                                        if (!contextValue.sidebarState.menu) contextValue.sidebarState.menu = {};
+
+                                        contextValue.sidebarState.menu[roleId] = {
+                                            isOpened
+                                        }
+                                        setContextValue(contextValue);
+                                    }} defaultOpen={ contextValue.sidebarState?.menu[roleId]?.isOpened === true} onClick={e=>{
+                                        addClassName("react-slidedown-transition",document.getElementsByClassName("react-slidedown"));
+                                    }}>
+                                        {Object.keys(submenu).map((submenuRoleId: string)=>{
+                                            let submenuRole = submenu[submenuRoleId];
+                                            
+                                            return <MenuItem key={`submenu-${submenuRoleId}`} onClick={e=>{
+                                                contextValue.sidebarState.menu[roleId]['selected'] = submenuRoleId;
+                                                
+                                                setContextValue(contextValue);
+
+                                                if (submenuRole.route){
+                                                    router.push(submenuRole.route);
+                                                }
+                                            }}>
+                                                { submenuRole.title }
+                                            </MenuItem>
+                                        })}
+                                    </SubMenu>
+                                )
+                            }else{
+                                console.log('Menu route',menu.route);
+                                console.log('Location path',window.location.pathname);
+                                menuItemElement = (
+                                    <MenuItem className={ menu.route === window.location.pathname ? "pro-menu-active" : ""  } key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
+                                        if (menu.route){
+                                            router.push(menu.route);
+                                        }
+                                    }}>{ menu.title }</MenuItem>
+                                );
+                            }
+                            return menuItemElement;
+                        })}
+
+                    </Menu>
+
+
+                    <Box className="sidebar-bg-color sidebar-width" sx={{ position: "fixed", bottom: 0, borderTop: "1px solid rgba(179,184,212,.2)" }}>
+                        {/* <Divider sx={{ backgroundColor: "#3c3c3c" }} /> */}
+                        
+                        {/* <MuiButton  className="sidebar-bg-color" color="info" variant="contained" sx={{ width: "300px", height: "50px", textTransform: "initial", justifyContent: "flex-start", alignItems: "center", '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
+                            
+                            setMainContent(<PagePreloader />);
+                            
+                            httpPostRequest(`${api}/logout`).then(response=>{
+                                localStorage.removeItem("token");
+                                router.push("users/login");
+                            });
+                        }}>
+                            <div style={{ fontSize: "16px", fontFamily: "'Open Sans', sans-serif", display: "flex", alignItems: "center" }}>
+                                <LogoutIcon sx={{ fontSize: "16px" }} />
+                                <div style={{ marginLeft: "10px" }}>Log out</div>
+                            </div>
+                        </MuiButton> */}
+
+                                {/* <Divider sx={{ backgroundColor: "#3c3c3c" }} /> */}
+
+                                <div
+                                    className="sidebar-btn-wrapper"
+                                    style={{
+                                        padding: '20px 24px',
+                                    }}
+                                >
+                                    <MuiButton className="sidebar-btn">
+                                        <Center>
+                                            { AppIcon({
+                                                "type": "fas",
+                                                "class": "arrow-right-from-bracket"
+                                            }) }
+                                            <span style={{ fontSize: "14px", position: "relative", top: "1.2px", fontWeight: 400 }}>
+                                                Log out
+                                            </span>
+                                        </Center>
+                                    </MuiButton>
+                                </div>
+                            </Box>
+                            
+                        </ProSidebar>
+                        
+                        {/* <Sider className="sidebar site-layout-background" width={ 300 }>
+
+                            <Menu
+                                defaultSelectedKeys={['12']}
+                                defaultOpenKeys={['sub1','sub2']}
+                                mode="inline"
+                                theme="dark"
+                                inlineCollapsed={ false }
+                            >
+
+                            {Object.keys(menuItems).map((roleId: string)=>{
+                                let menu = menuItems[roleId];
+                                
+                                let menuItemElement: JSX.Element; 
+                                
+                                if (typeof menu.submenu != "undefined"){
+                                    let submenu = menu.submenu;
+                                    
+                                    menuItemElement = (
+                                        <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title}>
+                                            {Object.keys(submenu).map((submenuRoleId: string)=>{
+                                                let submenuRole = submenu[submenuRoleId];
+                                                
+                                                return <Menu.Item key={`submenu-${submenuRoleId}`} onClick={e=>{
+                                                    if (submenuRole.route){
+                                                        topbar.show();
+                                                        router.push(submenuRole.route);
+                                                        topbar.hide();
+                                                    }
+                                                }}>
+                                                    { submenuRole.title }
+                                                </Menu.Item>
+                                            })}
+                                        </SubMenu>
+                                    )
+                                }else{
+                                    menuItemElement = ( 
+                                        <Menu.Item key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
+                                            if (menu.route){
+                                                router.push(menu.route);
+                                            }
+                                        }}>
+                                            { menu.title }
+                                        </Menu.Item>
+                                    );
+                                }
+                                return menuItemElement;
+                            })}
+                            </Menu>
+                            
+                            <Box sx={{ position: "fixed", bottom: 0, backgroundColor: darkThemeColor }}>
+                                <Divider sx={{ backgroundColor: "#3c3c3c" }} />
+                                
+                                <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, justifyContent: "flex-start", alignItems: "center", '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
+                                    
+                                    setMainContent(<PagePreloader />);
+                                    
+                                    httpPostRequest(`${api}/logout`).then(response=>{
+                                        localStorage.removeItem("token");
+                                        router.push("users/login");
+                                    });
+                                }}>
+                                    <div style={{ fontSize: "13px", fontFamily: "'Open Sans', sans-serif", display: "flex", alignItems: "center" }}>
+                                        <LogoutIcon sx={{ fontSize: "16px" }} />
+                                        <div style={{ marginLeft: "10px" }}>Log out</div>
+                                    </div>
+                                </MuiButton>
+                            </Box>
+                            
+                        </Sider> */}
+
+                        <div  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%" }}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
+                                { props.children }
+                            </div>
+                        </div>
+                        
+                        <SwipeableDrawer
+                            anchor= { swipeableDrawerAnchor }
+                            open={ swipeableDrawerIsVisible }
+                            onClose={e=>{
+                                showSwipeableDrawer(false)
+                            }}
+                            onOpen={e=>{
+                                showSwipeableDrawer(true)
+                            }}
+                        >
+                            { swipeableDrawerContent }
+                        </SwipeableDrawer>
+
+                        <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
+
+                        <Dialog open={ modalIsOpened }>
+                            { modalContent }
+                        </Dialog>
+                    
+                    </div>   
+
+                :<div></div>
+        );
+    }
+
+
+    const [mainContent, setMainContent] = useState(contextValue.initialLoadIsReady?firstPaintContent(contextValue.user, contextValue.menuItems):<PagePreloader />);
 
     const router = useRouter();
 
@@ -91,147 +318,29 @@ export default function(props: MainProps){
 
         topbar.hide();
 
-        //topbar.show();
-        //@ts-ignore
-        //document.querySelector(".app-topbar").style.top = 50;
-        //$(".topbar").css("top",navbarHeight);
-        // topbar.progress("0.7");
-        // topbar.hide();
-
-
-        // window.onbeforeunload = function(){
+        if (!contextValue.initialLoadIsReady){
             
-        //     //if (platform.is_android()) Android.destroyAd();
-
-        //     //pp('show');
-        //     topbar.show();
-
-        //     setTimeout(function(){
-        //         //pp('hide');
-        //         topbar.hide();
-        //     },30000);
-
-        // };
-
-
-        httpPostRequest(`${api}/login-status`).then(response=>{
-            let user = response.data; 
-            if (user.isLoggedIn){
-                //document.title = `${user.name} | ${titleSuffix}`;
-                httpPostRequest(`${api}/menu-items`).then(response=>{
-                    let menuItems = response.data;
-                    
-                    setMainContent(
-                        Object.keys(menuItems).length > 0?
-              
-                            <Layout>
-                                
-                                <Sider className="sidebar site-layout-background" width={ 300 }>
-
-                                    <Menu
-                                        defaultSelectedKeys={['12']}
-                                        defaultOpenKeys={['sub1','sub2']}
-                                        mode="inline"
-                                        theme="dark"
-                                        inlineCollapsed={ false }
-                                    >
-
-                                    {Object.keys(menuItems).map((roleId: string)=>{
-                                        let menu = menuItems[roleId];
-                                        
-                                        let menuItemElement: JSX.Element; 
-                                        
-                                        if (typeof menu.submenu != "undefined"){
-                                            let submenu = menu.submenu;
-                                            
-                                            menuItemElement = (
-                                                <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title}>
-                                                    {Object.keys(submenu).map((submenuRoleId: string)=>{
-                                                        let submenuRole = submenu[submenuRoleId];
-                                                        
-                                                        return <Menu.Item key={`submenu-${submenuRoleId}`} onClick={e=>{
-                                                            if (submenuRole.route){
-                                                                topbar.show();
-                                                                router.push(submenuRole.route);
-                                                                topbar.hide();
-                                                            }
-                                                        }}>
-                                                            { submenuRole.title }
-                                                        </Menu.Item>
-                                                    })}
-                                                </SubMenu>
-                                            )
-                                        }else{
-                                            menuItemElement = ( 
-                                                <Menu.Item key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
-                                                    if (menu.route){
-                                                        router.push(menu.route);
-                                                    }
-                                                }}>
-                                                    { menu.title }
-                                                </Menu.Item>
-                                            );
-                                        }
-                                        return menuItemElement;
-                                    })}
-                                    </Menu>
-                                    
-                                    <Box sx={{ position: "fixed", bottom: 0, backgroundColor: darkThemeColor }}>
-                                        <Divider sx={{ backgroundColor: "white" }} />
-                                        
-                                        <MuiButton color="info" variant="contained" sx={{ width: "300px", height: "50px", backgroundColor: darkThemeColor, '&:hover':{ backgroundColor: darkThemeColor } }} onClick={e=>{
-                                            
-                                            setMainContent(<PagePreloader />);
-                                            
-                                            httpPostRequest(`${api}/logout`).then(response=>{
-                                                localStorage.removeItem("token");
-                                                router.push("users/login");
-                                            });
-                                        }}>
-                                            <SpaceBetween style={{ fontSize: "14px" }}>
-                                                <div>Log out</div>
-                                                <LogoutIcon />
-                                            </SpaceBetween>
-                                        </MuiButton>
-                                    </Box>
-                                    
-                                </Sider>
-            
-                                <Content  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto" }}>
-                                    { props.children }
-                                </Content>
-                                
-                                <SwipeableDrawer
-                                    anchor= { swipeableDrawerAnchor }
-                                    open={ swipeableDrawerIsVisible }
-                                    onClose={e=>{
-                                        showSwipeableDrawer(false)
-                                    }}
-                                    onOpen={e=>{
-                                        showSwipeableDrawer(true)
-                                    }}
-                                >
-                                    { swipeableDrawerContent }
-                                </SwipeableDrawer>
-            
-                                <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
-            
-                                <Dialog open={ modalIsOpened }>
-                                    { modalContent }
-                                </Dialog>
-                            
-                            </Layout>   
-            
-                        :<div></div>
-                    )
-                });
-
-            }else{
-                router.push("users/login");
-            }
-        }).catch(error=>{
-            catchAxiosError(error);
-        });
+            httpPostRequest(`${api}/login-status`).then(response=>{
+                let user = response.data;
+                contextValue.user = user;
+                if (user.isLoggedIn){
+                    //document.title = `${user.name} | ${titleSuffix}`;
+                    httpPostRequest(`${api}/menu-items`).then(response=>{
+                        let menuItems = response.data;
+                        contextValue.menuItems = menuItems;
+                        contextValue.initialLoadIsReady = true;
+                        setContextValue(contextValue);
+                        setMainContent(firstPaintContent(user, menuItems));
+                    });
+    
+                }else{
+                    router.push("users/login");
+                }
+            }).catch(error=>{
+                catchAxiosError(error);
+            });
+        }
+    
 
     },[]);
 
@@ -391,4 +500,6 @@ interface MainProps{
     showBackgroundImage?: boolean;
 
     children: any;
+
+    pagePadding?: boolean;
 }

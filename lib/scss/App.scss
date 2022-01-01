@@ -1,5 +1,17 @@
 
-$darkThemeColor:#001529;
+$dark-theme-color:#001529;
+
+$sidebar-bg-color: #0c1e35;
+$submenu-bg-color: rgba(255, 255, 255, 0.05);
+$submenu-bg-color-collapsed: rgba(#0c1e35, 0.95);
+$sidebar-color: #b3b8d4;
+$highlight-color: #dee2ec;
+$icon-bg-color: rgba(255, 255, 255, 0.05);
+$icon-size: 35px;
+$sidebar-width: 300px;
+$sidebar-menu-active-background-color: rgba(0,0,0,0.3);
+
+@import '~react-pro-sidebar/dist/scss/styles.scss';
 
 
 @mixin scrollbar{
@@ -124,17 +136,90 @@ $rippleColor: white;
 }
 
 .sidebar{
-	background-color: $darkThemeColor;
-	height: calc(100vh - 50px);
-	max-height: calc(100vh - 50px); 
-	width: 300px; 
-	overflow-y: auto;
-	padding-bottom: 100px;
+	background-color: $sidebar-bg-color;
 
-	@include scrollbar();
+	.pro-sidebar-layout{
+		height: calc(100vh - 50px) !important;
+		max-height: calc(100vh - 50px); 
+		width: $sidebar-width; 
+		overflow-y: auto;
+		padding-bottom: 100px;
+		
+		@include scrollbar();
+	}
+
+	&-bg-color{
+		background-color: $sidebar-bg-color !important;
+	}
+
+	&-width{
+		width: $sidebar-width;
+	}
+
+	&-btn-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		.sidebar-btn {
+		  transition: width 0.3s;
+		  width: 150px;
+		  padding: 1px 15px;
+		  border-radius: 40px;
+		  background: rgba(255, 255, 255, 0.05);
+		  color: #adadad;
+		  text-decoration: none;
+		  margin: 0 auto;
+		  height: 35px;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  text-overflow: ellipsis;
+		  overflow: hidden;
+		  text-transform: initial;
+		  span {
+			margin-left: 5px;
+			font-size: 13px;
+		  }
+		  &:hover {
+			color: $highlight-color;
+			background-color:  rgba(255, 255, 255, 0.05);
+		  }
+		}
+	}
+
+	.pro-menu {
+
+		&-active{
+			background-color: $sidebar-menu-active-background-color;
+		}
+
+		&-item {
+			& > .pro-inner-item{
+				&:focus,&-active{
+					background-color: $sidebar-menu-active-background-color;
+				}
+			}
+			
+		}
+	}
+
 }
 
 
 .overflow-scroll{
 	@include scrollbar();
+}
+
+
+.pro-sidebar .pro-menu .pro-menu-item > .pro-inner-item:focus {
+    background-color: rgba(0,0,0,0.3);
+}
+
+
+.react-slidedown-transition{
+	transition-duration: 0.2s !important;
+}
+
+.react-slidedown{
+	transition-duration: 0s;
 }
