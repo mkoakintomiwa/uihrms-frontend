@@ -7,8 +7,10 @@ import { organizationLogo } from "../system/settings";
 
 export default function PagePreloader(props: PageSpinnerProps){ 
     const antIcon = <LoadingOutlined style={{ fontSize: 20, color: "black" }} spin />;
+
+    let height = typeof props.height != "undefined" ? props.height : "90vh";
     
-    return <Center fullscreen style={{ height: "90vh" }}>
+    return <Center style={{ height, width: "100%" }}>
         <div>
             <Center style={{ marginBottom: "20px" }}>
                 <img alt="Origanization Logo" src={ organizationLogo } style={{ height: "100px" }} />
@@ -27,4 +29,6 @@ interface PageSpinnerProps{
     children?: any;
 
     style?: React.CSSProperties;
+
+    height?: string
 }

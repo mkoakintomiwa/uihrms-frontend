@@ -177,7 +177,7 @@ $rippleColor: white;
 		  overflow: hidden;
 		  text-transform: initial;
 		  span {
-			margin-left: 5px;
+			margin-left: 10px;
 			font-size: 13px;
 		  }
 		  &:hover {
@@ -222,4 +222,8 @@ $rippleColor: white;
 
 .react-slidedown{
 	transition-duration: 0s;
+}
+
+.display-none{
+	display: none !important;
 }

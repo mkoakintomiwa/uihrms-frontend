@@ -1,43 +1,18 @@
 import * as React from "react"
 import { useState, useEffect, useContext } from "react"
-import Script from "next/script";
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import MuiButton from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import NotificationIcon from '@mui/icons-material/Notifications';
-import MessageIcon from '@mui/icons-material/MessageRounded';
 import httpPostRequest from "../network/httpPostRequest";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
 import MuiAccordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import CircularProgress from '@mui/material/CircularProgress'
-import SpaceBetween from '../components/SpaceBetween'
-import Avatar from '@mui/material/Avatar';
-import Badge from '@mui/material/Badge';
 import CircularPreloader from '../../lib/components/CircularPreloader';
 import Dialog from "@mui/material/Dialog"
-import HtmlSelected from '../../lib/components/HtmlSelected';
-// import { Menu, Button, Layout } from 'antd';
 import { Layout } from "antd";
-import LogoutIcon from "@mui/icons-material/Logout"
-import { api, portalUrl, titleSuffix } from "../system/settings";
+import { api, portalUrl } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 import Center from "./Center";
@@ -45,42 +20,19 @@ import PagePreloader from "./PagePreloader";
 import { ProSidebar, Menu, MenuItem, SubMenu, SidebarFooter } from 'react-pro-sidebar';
 import { AppContext } from "../context/AppContext";
 import AysDialog from "./AysDialog";
-
-import {
-    AppstoreOutlined,
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    PieChartOutlined,
-    DesktopOutlined,
-    ContainerOutlined,
-    MailOutlined,
-  } from '@ant-design/icons';
-import Flex from "./Flex";
 import addClassName from "../dom/addClassName";
-
-// const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
 
 
 export default function(props: MainProps){
 
     let pagePadding =  typeof props.pagePadding != "undefined" ? props.pagePadding : true;
 
-    const [menuItems, setMenuItems] = useState({});
-    const [menuDropdownIsVisible, showMenuDropdown] = useState(false);
-    const [menuDropdownClientX, setmenuDropdownClientX] = useState(0);
-    const [menuDropdownContent, setMenuDropdownContent] = useState(<div></div>);
+
     const theme = useTheme();
     const isMobileScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [swipeableDrawerAnchor, setSwipeableDrawerAnchor ] = useState("left" as "top" | "right" | "bottom" | "left");
     const [swipeableDrawerIsVisible, showSwipeableDrawer] = useState(false);
     const [swipeableDrawerContent, setSwipeableDrawerContent] = useState(<div></div>);
-    // const [newNotificationsData, setNewNotificationsData] = useState({
-    //     messages: initNewMessages,
-    //     notifications: initNewNotifications
-    // });
-    // const [newMessages, setNewMessages] = useState(initNewMessages);
-    // const [newNotifications, setNewNotifications] = useState(initNewNotifications);
 
 
     const [circularPreloaderTitle, setCircularPreloaderTitle] = useState("");
@@ -88,7 +40,9 @@ export default function(props: MainProps){
 
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
-    const [aysIsOpened, openAys] = useState(false);
+
+    let backgroundColor = props.backgroundColor || "#efefef";
+    
     const [aysObject, ays] = useState({
         open: false,
         title: "",
@@ -100,9 +54,6 @@ export default function(props: MainProps){
 
     let sidebarActiveElementId = "";
 
-    const [isLoggingOut, setIsLoadingOut] = useState(false);
-
-
     var onSubmenuToggle = (isOpened: boolean, roleId: string) => {
         if (!contextValue.sidebarState) contextValue.sidebarState = {};
         if (!contextValue.sidebarState.menu) contextValue.sidebarState.menu = {};
@@ -113,7 +64,7 @@ export default function(props: MainProps){
         setContextValue(contextValue);
     }
 
-    var firstPaintContent = (user: any,menuItems: any)=>{
+    var drawContent = (user: any,menuItems: any)=>{
         return (
             Object.keys(menuItems).length > 0?
         
@@ -216,7 +167,8 @@ export default function(props: MainProps){
                                     title: "Log out?",
                                     content: "Are you sure you want to log out",
                                     action:()=>{
-                                        setMainContent(<PagePreloader />);
+                                        
+                                        setSidebarContent(<PagePreloader />);
                             
                                         httpPostRequest(`${api}/logout`).then(response=>{
                                             localStorage.removeItem("token");
@@ -230,7 +182,7 @@ export default function(props: MainProps){
                                         "type": "fas",
                                         "class": "arrow-right-from-bracket"
                                     }) }
-                                    <span style={{ fontSize: "14px", position: "relative", top: "1.2px", fontWeight: 400 }}>
+                                    <span style={{ fontSize: "14px", position: "relative", top: "1.4px", fontWeight: 400 }}>
                                         Log out
                                     </span>
                                 </Center>
@@ -241,32 +193,6 @@ export default function(props: MainProps){
                             
                 </ProSidebar>
                         
-                        
-
-                    <div  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%" }}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
-                            { props.children }
-                        </div>
-                    </div>
-                    
-                    <SwipeableDrawer
-                        anchor= { swipeableDrawerAnchor }
-                        open={ swipeableDrawerIsVisible }
-                        onClose={e=>{
-                            showSwipeableDrawer(false)
-                        }}
-                        onOpen={e=>{
-                            showSwipeableDrawer(true)
-                        }}
-                    >
-                        { swipeableDrawerContent }
-                    </SwipeableDrawer>
-
-                    <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
-
-                    <Dialog open={ modalIsOpened }>
-                        { modalContent }
-                    </Dialog>
                 
                 </div>   
 
@@ -275,18 +201,15 @@ export default function(props: MainProps){
     }
 
 
-    const [mainContent, setMainContent] = useState(contextValue.initialLoadIsReady?firstPaintContent(contextValue.user, contextValue.menuItems):<PagePreloader />);
+    const [sidebarContent, setSidebarContent] = useState(contextValue.initialLoadIsReady?drawContent(contextValue.user, contextValue.menuItems):<PagePreloader />);
+
 
     const router = useRouter();
-
-    let darkThemeColor = "#001529";
 
      
     useEffect(()=>{
 
         topbar.hide();
-
-        openAys(true);
 
         if (!contextValue.initialLoadIsReady){
             
@@ -300,7 +223,8 @@ export default function(props: MainProps){
                         contextValue.menuItems = menuItems;
                         contextValue.initialLoadIsReady = true;
                         setContextValue(contextValue);
-                        setMainContent(firstPaintContent(user, menuItems));
+                        setSidebarContent(drawContent(user, menuItems));
+                        document.getElementById("page-content")?.classList.remove("display-none");
                     });
     
                 }else{
@@ -334,7 +258,11 @@ export default function(props: MainProps){
     },[sidebarActiveElementId]);
 
 
-
+    useEffect(function(){
+        if (contextValue.initialLoadIsReady){
+            document.getElementById("page-content")?.classList.remove("display-none");
+        }
+    },[sidebarContent])
 
     let menuStyle = {
         marginRight: "20px",
@@ -364,76 +292,44 @@ export default function(props: MainProps){
         },
     }));
 
-    let sidenavpaddingLeft = 20;
-
-    let menuCommonIconButtons = 
-        <>
-            {/* <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-            >
-                <CalculateIcon />
-            </IconButton>
-
-
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-                href={`${relDirname}/users/messages/log`}
-            >
-                <Badge badgeContent={ newMessages } color="error" invisible={ newMessages === 0 }>
-                    <MessageIcon />
-                </Badge>
-            </IconButton>
-
-
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-                href={`${relDirname}/users/notifications`}
-            >
-                <Badge badgeContent={ newNotifications } color="error" invisible={ newNotifications === 0 }>
-                    <NotificationIcon />
-                </Badge>
-            </IconButton> */}
-        </>;
-
-
-    const UserMenuItem = (props: any)=>{
-        
-        return <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} {...props}>
-
-            <Avatar src={ props.user.dp } sx={{ width: 30, height: 30, /* boxShadow: "0 0 3px white" */ }} />
-
-            <div style={{ marginLeft: "5px", marginRight: "5px", maxWidth: "200px" }}>{ props.user.name }</div>
-
-            { props.chevronDown === false ? "" : chevronDown }
-        </Box>
-    }
-
 
     return(
         <>
 
-        {/* <Script src="/static/topbar/topbar.min.js" strategy="beforeInteractive" />
+            <div style={{ display: "flex" }}>
+                
+                { sidebarContent }
 
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/antd/4.17.4/antd.min.css' integrity='sha512-MIam2KgzIIyxRmfAqAM8+3pvkqhSqtHQVjlFx9v3SwfNPXgB6OW/LHtjWlfj4r5AtgOlLdn2ip7Yb2ndyP7KEQ==' crossOrigin='anonymous' referrerPolicy='no-referrer' /> */}
+                <div id="page-content"  className="overflow-scroll display-none" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%", backgroundColor }}>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
+                        { props.children }
+                    </div>
+                </div>
+            </div>
 
-        { mainContent }
+            <SwipeableDrawer
+                anchor= { swipeableDrawerAnchor }
+                open={ swipeableDrawerIsVisible }
+                onClose={e=>{
+                    showSwipeableDrawer(false)
+                }}
+                onOpen={e=>{
+                    showSwipeableDrawer(true)
+                }}
+            >
+                { swipeableDrawerContent }
+            </SwipeableDrawer>
 
-        <AysDialog open={ aysObject.open } onClose={()=>{
-            ays({  ...aysObject, open: false })
-        }} title={ aysObject.title } content={ aysObject.content } action={ aysObject.action } />
-    </>
+            <CircularPreloader isloading={ circularPreloaderIsOpened } title={ circularPreloaderTitle } />
+
+            <Dialog open={ modalIsOpened }>
+                { modalContent }
+            </Dialog>
+
+            <AysDialog open={ aysObject.open } onClose={()=>{
+                ays({  ...aysObject, open: false })
+            }} title={ aysObject.title } content={ aysObject.content } action={ aysObject.action } />
+        </>
     );
 }
 
@@ -480,4 +376,6 @@ interface MainProps{
     children: any;
 
     pagePadding?: boolean;
+
+    backgroundColor?: string;
 }

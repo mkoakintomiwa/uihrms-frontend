@@ -40,21 +40,12 @@ type ServerHost = {
 
 
 type User = {
-    uid: number,
-    username: string,
-    password: string,
+    userId: string,
     name: string,
-    clearance: string,
-    admin_priviledge: boolean,
-    admin_priviledges: AdminProperties,
-    admission_number: string,
-    dp: string,
-    branch: string,
-    phone_number: string,
-    email: string,
-    tid: number,
-    is_online: boolean,
-    is_student: boolean;
+    surname: string,
+    country: string,
+    phoneNumber: string,
+    startPage: string
 }
 
 
