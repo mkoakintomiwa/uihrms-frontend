@@ -10,6 +10,7 @@ $icon-bg-color: rgba(255, 255, 255, 0.05);
 $icon-size: 35px;
 $sidebar-width: 300px;
 $sidebar-menu-active-background-color: rgba(0,0,0,0.3);
+$blue-link: #216fdb;
 
 @import '~react-pro-sidebar/dist/scss/styles.scss';
 
@@ -160,31 +161,34 @@ $rippleColor: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
 		.sidebar-btn {
-		  transition: width 0.3s;
-		  width: 150px;
-		  padding: 1px 15px;
-		  border-radius: 40px;
-		  background: rgba(255, 255, 255, 0.05);
-		  color: #adadad;
-		  text-decoration: none;
-		  margin: 0 auto;
-		  height: 35px;
-		  display: flex;
-		  align-items: center;
-		  justify-content: center;
-		  text-overflow: ellipsis;
-		  overflow: hidden;
-		  text-transform: initial;
-		  span {
-			margin-left: 10px;
-			font-size: 13px;
-		  }
-		  &:hover {
-			color: $highlight-color;
-			background-color:  rgba(255, 255, 255, 0.05);
-		  }
-		}
+			transition: width 0.3s;
+			width: 150px;
+			padding: 1px 15px;
+			border-radius: 40px;
+			background: rgba(255, 255, 255, 0.05);
+			color: #adadad;
+			text-decoration: none;
+			margin: 0 auto;
+			height: 35px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			text-transform: initial;
+				
+				span {
+					margin-left: 10px;
+					font-size: 13px;
+				}
+
+				&:hover {
+					color: $highlight-color;
+					background-color:  rgba(255, 255, 255, 0.05);
+				}
+			}
 	}
 
 	.pro-menu {
@@ -226,4 +230,19 @@ $rippleColor: white;
 
 .display-none{
 	display: none !important;
+}
+
+
+.blue-link{
+	color: $blue-link !important;
+
+	&:hove{
+		color: $blue-link !important;
+	}
+}
+
+
+.small-link{
+	font-size: 14px;
+	font-family: "Open Sans";
 }

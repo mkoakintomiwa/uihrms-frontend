@@ -38,12 +38,11 @@ const Page: NextPage = () => {
 									<ListItemAvatar>
 										<Avatar alt={ user.name } src={ organizationLogo } />
 									</ListItemAvatar>
-									
-									<ListItemText primary={ user.name } />
 
 									<div>
+										<Typography variant="body1">{ user.name }</Typography>
 										<Link href={`/users/manage-roles/${user.userId}`} passHref>
-											<a>Manage Roles</a>
+											<a className='blue-link small-link'>Manage Roles</a>
 										</Link>
 									</div>
 								</ListItem>

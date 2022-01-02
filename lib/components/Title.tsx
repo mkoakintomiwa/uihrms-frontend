@@ -2,7 +2,7 @@ import * as React from "react"
 
 var Title = (props: ContainerProps)=>{    
     let style = {  
-        fontFamily: "Google Sans,Roboto,Arial,sans-serif",
+        fontFamily: "Open Sans,Roboto,Arial,sans-serif",
         lineHeight: "2.5rem",
         fontSize: "1.8rem",
         letterSpacing: 0,
