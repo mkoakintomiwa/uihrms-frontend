@@ -66,8 +66,6 @@ export default function(props: MainProps){
 
     var drawContent = (user: any,menuItems: any)=>{
         return (
-            Object.keys(menuItems).length > 0?
-        
             <div style={{ display: "flex" }}>
 
                 <ProSidebar className="sidebar">
@@ -190,13 +188,8 @@ export default function(props: MainProps){
                         </div>
 
                     </Box>
-                            
-                </ProSidebar>
-                        
-                
-                </div>   
-
-                :<div></div>
+                </ProSidebar> 
+            </div>   
         );
     }
 

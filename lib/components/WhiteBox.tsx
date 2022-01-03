@@ -4,7 +4,7 @@ export default function WhiteBox(props: ContainerProps){
     let style: React.CSSProperties = { 
         backgroundColor: "white", 
         width: "100%",
-        padding: "20px",
+        padding: "30px",
         //margin-top: 50px,
         borderRadius: "5px",
         boxShadow: "0 0 5px rgba(0,0,0,0.3)"
