@@ -68,7 +68,7 @@ const Page: NextPage = () => {
 	return (
 		<>
 			<Head>
-				<title>Users | { titleSuffix }</title>
+				<title>Manage Roles | { titleSuffix }</title>
 			</Head>
 
 			<Main backgroundColor={ backgroundColor }>
