@@ -6,7 +6,7 @@ export default function validateForm(validationRules: any, formState: Record<str
     let notValidatedIndex = -1;
     for(const [name, formObject] of Object.entries(formState as Record<string,FormObject>)){
         formState[name] = validationRules[name](formObject.value,formObject);
-        validated &&= formState[name].validated!;
+        validated = validated && formState[name].validated!;
         if (!formState[name].validated!){
             notValidatedIndex++;
         }
