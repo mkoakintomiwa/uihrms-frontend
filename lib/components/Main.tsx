@@ -21,6 +21,7 @@ import { ProSidebar, Menu, MenuItem, SubMenu, SidebarFooter } from 'react-pro-si
 import { AppContext } from "../context/AppContext";
 import AysDialog from "./AysDialog";
 import addClassName from "../dom/addClassName";
+import Link from "next/link";
 
 
 export default function(props: MainProps){
@@ -40,6 +41,10 @@ export default function(props: MainProps){
 
     const [modalIsOpened, openModal] = useState(false);
     const [modalContent, setModalContent] = useState(<div></div>);
+    const [pageContentIsVisible, showPageContent] = useState(false);
+    const [appIsLoading, setAppIsLoading] = useState(true);
+    const [menuItems, setMenuItems] = useState({} as Record<string,any>);
+    const [user, setUser] = useState({} as any);
 
     let backgroundColor = props.backgroundColor || "#efefef";
     
@@ -64,141 +69,9 @@ export default function(props: MainProps){
         setContextValue(contextValue);
     }
 
-    var drawContent = (user: any,menuItems: any)=>{
-        return (
-            <div style={{ display: "flex" }}>
-
-                <ProSidebar className="sidebar">
-                    <Menu className="sidebar-width" iconShape="circle">
-                        
-                        <MenuItem className={ "/" === window.location.pathname ? "pro-menu-active" : ""  } icon={AppIcon({
-                            type: "fas",
-                            class: "gauge"
-                        })} onClick={e=>{
-                            router.push("/");
-                        }} >Dashboard</MenuItem>
-
-
-                        {Object.keys(menuItems).map((roleId: string)=>{
-                            let menu = menuItems[roleId];
-                            
-                            let menuItemElement: JSX.Element; 
-                            
-                            if (typeof menu.submenu != "undefined"){
-                                let submenu = menu.submenu;
-
-                                let submenuIsOpened = false;
-
-                                Object.keys(submenu).map((submenuRoleId: string)=>{
-                                    let submenuRole = submenu[submenuRoleId];
-
-                                    submenuIsOpened ||= submenuRole.route === window.location.pathname;
-
-                                    if (submenuRole.route === window.location.pathname){
-                                        sidebarActiveElementId = `submenu-${submenuRoleId}`;
-                                        onSubmenuToggle(true, roleId);
-                                    }
-                                });
-
-                                let submenuDefaultOpen = false;
-
-                                if (typeof contextValue.sidebarState?.menu != "undefined"){
-                                    submenuDefaultOpen = contextValue.sidebarState?.menu[roleId]?.isOpened === true;
-                                }
-                                
-                                menuItemElement = (
-                                    <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title} onOpenChange={isOpened=>{
-
-                                        onSubmenuToggle(isOpened, roleId);
-                                        
-                                    }} defaultOpen={ submenuDefaultOpen || submenuIsOpened } onClick={e=>{
-                                        addClassName("react-slidedown-transition",document.getElementsByClassName("react-slidedown"));
-                                    }}>
-                                        {Object.keys(submenu).map((submenuRoleId: string)=>{
-                                            let submenuRole = submenu[submenuRoleId];
-                                            
-                                            return <MenuItem id={`submenu-${submenuRoleId}`} className={ submenuRole.route === window.location.pathname ? "pro-menu-active" : ""  } key={`submenu-${submenuRoleId}`} onClick={e=>{
-                                                
-                                                contextValue.sidebarState.menu[roleId]['selected'] = submenuRoleId;
-                                                
-                                                setContextValue(contextValue);
-
-                                                if (submenuRole.route){
-                                                    router.push(submenuRole.route);
-                                                }
-                                            }}>
-                                                { submenuRole.title }
-                                            </MenuItem>
-                                        })}
-                                    </SubMenu>
-                                )
-                            }else{
-                                
-                                sidebarActiveElementId = `menu-${roleId}`;
-
-                                menuItemElement = (
-                                    <MenuItem id={`menu-${roleId}`} className={ menu.route === window.location.pathname ? "pro-menu-active" : ""  } key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
-                                        if (menu.route){
-                                            router.push(menu.route);
-                                        }
-                                    }}>{ menu.title }</MenuItem>
-                                );
-                            }
-                            return menuItemElement;
-                        })}
-
-                    </Menu>
-
-
-                    <Box className="sidebar-bg-color sidebar-width" sx={{ position: "fixed", bottom: 0, borderTop: "1px solid rgba(179,184,212,.2)" }}>
-                        
-
-                        <div
-                            className="sidebar-btn-wrapper"
-                            style={{
-                                padding: '20px 24px',
-                            }}
-                        >
-                            <MuiButton className="sidebar-btn" onClick={ e=>{
-                                ays({
-                                    open: true,
-                                    title: "Log out?",
-                                    content: "Are you sure you want to log out",
-                                    action:()=>{
-                                        
-                                        setSidebarContent(<PagePreloader />);
-                            
-                                        httpPostRequest(`${api}/logout`).then(response=>{
-                                            localStorage.removeItem("token");
-                                            router.push("/users/login");
-                                        });
-                                    }
-                                });
-                            } }>
-                                <Center>
-                                    { AppIcon({
-                                        "type": "fas",
-                                        "class": "arrow-right-from-bracket"
-                                    }) }
-                                    <span style={{ fontSize: "14px", position: "relative", top: "1.4px", fontWeight: 400 }}>
-                                        Log out
-                                    </span>
-                                </Center>
-                            </MuiButton>
-                        </div>
-
-                    </Box>
-                </ProSidebar> 
-            </div>   
-        );
-    }
-
-
-    const [sidebarContent, setSidebarContent] = useState(contextValue.initialLoadIsReady?drawContent(contextValue.user, contextValue.menuItems):<PagePreloader />);
-
 
     const router = useRouter();
-
+    
      
     useEffect(()=>{
 
@@ -216,8 +89,10 @@ export default function(props: MainProps){
                         contextValue.menuItems = menuItems;
                         contextValue.initialLoadIsReady = true;
                         setContextValue(contextValue);
-                        setSidebarContent(drawContent(user, menuItems));
-                        document.getElementById("page-content")?.classList.remove("display-none");
+                        setAppIsLoading(false);
+                        setUser(user);
+                        setMenuItems(menuItems);
+                        showPageContent(true);
                     });
     
                 }else{
@@ -226,6 +101,11 @@ export default function(props: MainProps){
             }).catch(error=>{
                 catchAxiosError(error);
             });
+        }else{
+            setAppIsLoading(false);
+            setUser(contextValue.user);
+            setMenuItems(contextValue.menuItems);
+            showPageContent(true);
         }
 
     },[]);
@@ -251,11 +131,11 @@ export default function(props: MainProps){
     },[sidebarActiveElementId]);
 
 
-    useEffect(function(){
-        if (contextValue.initialLoadIsReady){
-            document.getElementById("page-content")?.classList.remove("display-none");
-        }
-    },[sidebarContent])
+    // useEffect(function(){
+    //     if (contextValue.initialLoadIsReady){
+    //         showPageContent(true);
+    //     }
+    // },[sidebarContent])
 
     let menuStyle = {
         marginRight: "20px",
@@ -288,17 +168,156 @@ export default function(props: MainProps){
 
     return(
         <>
-
-            <div style={{ display: "flex" }}>
+            {!appIsLoading?(
+                <div style={{ display: "flex" }}>
                 
-                { sidebarContent }
+                    <div style={{ display: "flex" }}>
 
-                <div id="page-content"  className="overflow-scroll display-none" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%", backgroundColor }}>
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
-                        { props.children }
+                        <ProSidebar className="sidebar">
+                            <Menu className="sidebar-width" iconShape="circle">
+                                
+                                <MenuItem className={ "/" === router.pathname ? "pro-menu-active" : ""  } icon={AppIcon({
+                                    type: "fas",
+                                    class: "gauge"
+                                })}>
+                                    <Link href="/">Dashboard</Link>
+                                </MenuItem>
+
+
+                                {Object.keys(menuItems).map((roleId: string)=>{
+                                    let menu = menuItems[roleId];
+                                    
+                                    let menuItemElement: JSX.Element; 
+                                    
+                                    if (typeof menu.submenu != "undefined"){
+                                        let submenu = menu.submenu;
+
+                                        let submenuIsOpened = false;
+
+                                        Object.keys(submenu).map((submenuRoleId: string)=>{
+                                            let submenuRole = submenu[submenuRoleId];
+
+                                            submenuIsOpened ||= submenuRole.route === router.pathname;
+
+                                            if (submenuRole.route === router.pathname){
+                                                sidebarActiveElementId = `submenu-${submenuRoleId}`;
+                                                onSubmenuToggle(true, roleId);
+                                            }
+                                        });
+
+                                        let submenuDefaultOpen = false;
+
+                                        if (typeof contextValue.sidebarState?.menu != "undefined"){
+                                            submenuDefaultOpen = contextValue.sidebarState?.menu[roleId]?.isOpened === true;
+                                        }
+                                        
+                                        menuItemElement = (
+                                            <SubMenu key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } title={menu.title} onOpenChange={isOpened=>{
+
+                                                onSubmenuToggle(isOpened, roleId);
+                                                
+                                            }} defaultOpen={ submenuDefaultOpen || submenuIsOpened } onClick={e=>{
+                                                addClassName("react-slidedown-transition",document.getElementsByClassName("react-slidedown"));
+                                            }}>
+                                                {Object.keys(submenu).map((submenuRoleId: string)=>{
+                                                    let submenuRole = submenu[submenuRoleId];
+                                                    
+                                                    return <MenuItem id={`submenu-${submenuRoleId}`} className={ submenuRole.route === router.pathname ? "pro-menu-active" : ""  } key={`submenu-${submenuRoleId}`} onClick={e=>{
+                                                        
+                                                        contextValue.sidebarState.menu[roleId]['selected'] = submenuRoleId;
+                                                        
+                                                        setContextValue(contextValue);
+
+                                                        // if (submenuRole.route){
+                                                        //     router.push(submenuRole.route);
+                                                        // }
+                                                    }}>
+                                                        {!submenuRole.route?(
+                                                            <div>{ submenuRole.title }</div>
+                                                        ):(
+                                                            <Link href={ submenuRole.route }>{ submenuRole.title }</Link>
+                                                        )}
+                                                    </MenuItem>
+                                                })}
+                                            </SubMenu>
+                                        )
+                                    }else{
+                                        
+                                        sidebarActiveElementId = `menu-${roleId}`;
+
+                                        menuItemElement = (
+                                            <MenuItem id={`menu-${roleId}`} className={ menu.route === router.pathname ? "pro-menu-active" : ""  } key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
+                                                // if (menu.route){
+                                                //     router.push(menu.route);
+                                                // }
+                                            }}>
+                                                {menu.route?<Link href={ menu.route }>{ menu.title }</Link>:<div>{ menu.title }</div>}
+                                                
+                                            </MenuItem>
+                                        );
+                                    }
+                                    return menuItemElement;
+                                })}
+
+                            </Menu>
+
+
+                            <Box className="sidebar-bg-color sidebar-width" sx={{ position: "fixed", bottom: 0, borderTop: "1px solid rgba(179,184,212,.2)" }}>
+                                
+
+                                <div
+                                    className="sidebar-btn-wrapper"
+                                    style={{
+                                        padding: '20px 24px',
+                                    }}
+                                >
+                                    <MuiButton className="sidebar-btn" onClick={ e=>{
+                                        ays({
+                                            open: true,
+                                            title: "Log out?",
+                                            content: "Are you sure you want to log out",
+                                            action:()=>{
+                                            
+                                                setAppIsLoading(true);
+                                    
+                                                httpPostRequest(`${api}/logout`).then(response=>{
+                                                    localStorage.removeItem("token");
+                                                    router.push("/users/login");
+                                                });
+                                                setContextValue({} as any);
+                                            }
+                                        });
+                                    } }>
+                                        <Center>
+                                            { AppIcon({
+                                                "type": "fas",
+                                                "class": "arrow-right-from-bracket"
+                                            }) }
+                                            <span style={{ fontSize: "14px", position: "relative", top: "1.4px", fontWeight: 400 }}>
+                                                Log out
+                                            </span>
+                                        </Center>
+                                    </MuiButton>
+                                </div>
+
+                            </Box>
+                        </ProSidebar> 
                     </div>
+
+                    {pageContentIsVisible?(
+                        <div id="page-content"  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%", backgroundColor }}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
+                                { props.children }
+                            </div>
+                        </div>
+                    ):<></>}
+                
                 </div>
-            </div>
+
+              
+            ) : (
+                <PagePreloader />
+            )}
 
             <SwipeableDrawer
                 anchor= { swipeableDrawerAnchor }

@@ -26,17 +26,17 @@ import { useState } from "react"
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-export default (props: ContainerProps)=>{    
+export default function HtmlSelected(props: ContainerProps){    
     let options = props.options;
 
-    let defaultValue = typeof props.selected != "undefined" ? props.selected : "";
+    let defaultValue = typeof props.selected != "undefined" ? props.selected : " ";
     let hasPlaceholder = typeof props.hasPlaceholder != "undefined" ? props.hasPlaceholder : true;
 
     const [value, setValue] = useState(defaultValue);
     
     if (hasPlaceholder){
         options = {
-            "":"-Select-",
+            " ":"-Select-",
             ...options
         };
     }
@@ -48,7 +48,7 @@ export default (props: ContainerProps)=>{
         }} {...props}>
             {Object.keys(options).map(key=>{
                 let value = options[key];
-                return <MenuItem value={key}>{value}</MenuItem>
+                return <MenuItem key={`menu-item-${key}`} value={key}>{value}</MenuItem>
             })}
         </Select>        
     )

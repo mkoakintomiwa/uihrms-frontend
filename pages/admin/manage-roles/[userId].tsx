@@ -21,7 +21,7 @@ import axios from 'axios'
 import httpGetRequest from '../../../lib/network/httpGetRequest'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import cloneDeep from '../../../lib/object/cloneDeep'
+import cloneDeep from 'lodash.clonedeep'
 
 const Page: NextPage = () => {
 

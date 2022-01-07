@@ -41,7 +41,7 @@ const Page: NextPage = () => {
 
 									<div>
 										<Typography variant="body1">{ user.name }</Typography>
-										<Link href={`/users/manage-roles/${user.userId}`} passHref>
+										<Link href={`/admin/manage-roles/${user.userId}`} passHref>
 											<a className='blue-link small-link'>Manage Roles</a>
 										</Link>
 									</div>

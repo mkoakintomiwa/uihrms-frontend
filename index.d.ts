@@ -49,6 +49,28 @@ type User = {
 }
 
 
+type FormObject = {
+    value?: any;
+
+    label: string;
+    
+    validated?: boolean;
+    
+    error?: boolean;
+    
+    helperText?: string;
+
+    type?: "text" | "email" | "phone-number" | "image" | "file" | "select";
+
+    maxSize?: number;
+
+    width?: string;
+
+    height?: string;
+
+    options?: Record<string,string>;
+}
+
 type AdminProperties = {
     register_a_new_student: boolean,
     view_students_profile: boolean,
