@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
@@ -22,6 +22,9 @@ import httpGetRequest from '../../../lib/network/httpGetRequest'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import cloneDeep from 'lodash.clonedeep'
+import Flex from '../../../lib/components/Flex'
+import ImageAvatar from '../../../lib/components/ImageAvatar'
+import UserDescription from '../../../lib/components/UserDescription'
 
 const Page: NextPage = () => {
 
@@ -31,12 +34,13 @@ const Page: NextPage = () => {
     const [checkboxesState, setCheckboxesState] = useState({} as Record<string,any>);
     const [checkboxIsLoadingState, setCheckboxIsLoadingState] = useState({} as Record<string,boolean>);
     const [pageIsLoading, setPageIsLoading] = useState(true);
-    const [user, setUser] = useState({} as Record<string,any>);
+    const [user, setUser] = useState({} as User);
     const [roleGroups, setRoleGroups] = useState({} as Record<string,any>);
 
     const router = useRouter();
 
     const { userId } = router.query;
+
 
 	useEffect(function(){
 
@@ -57,7 +61,6 @@ const Page: NextPage = () => {
                 const { userData, userRoles } = pageData;
                 setPageIsLoading(false);
                 setBackgroundColor("");
-                
                 setUser(userData.data);
                 setRoleGroups(userRoles.data);
             });
@@ -77,9 +80,9 @@ const Page: NextPage = () => {
                         <PagePreloader height="80vh" />
                     ) : (
                         <WhiteBox style={{ width: "500px" }}>  
-                            <Typography variant='h6' sx={{ fontSize: "18px !important" }}>Manage Roles</Typography>
+                            <Typography variant='h6' sx={{ fontSize: "18px !important", marginBottom: "20px" }}>Manage Roles</Typography>
 
-                            <Title style={{ fontSize: "20px", marginBottom: "20px" }}>{ user.name }</Title>
+                            <UserDescription />
                             
                             {Object.keys(roleGroups).map(roleGroupId=>{
                                 let roleGroup = roleGroups[roleGroupId];

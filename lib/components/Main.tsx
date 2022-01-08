@@ -96,7 +96,7 @@ export default function(props: MainProps){
                     });
     
                 }else{
-                    router.push("users/login");
+                    router.push("/users/login");
                 }
             }).catch(error=>{
                 catchAxiosError(error);
@@ -168,7 +168,7 @@ export default function(props: MainProps){
 
     return(
         <>
-            {!appIsLoading?(
+            {(!appIsLoading && user)?(
                 <div style={{ display: "flex" }}>
                 
                     <div style={{ display: "flex" }}>

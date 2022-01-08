@@ -15,6 +15,7 @@ import Avatar from '@mui/material/Avatar'
 import ListItemText from '@mui/material/ListItemText'
 import Link from 'next/link'
 import Button from '@mui/material/Button'
+import ImageAvatar from '../lib/components/ImageAvatar'
 
 const Page: NextPage = () => {
 
@@ -34,13 +35,14 @@ const Page: NextPage = () => {
 					<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
 						{users.map(user=>{
 							return (	
-								<ListItem key={ user.userId } alignItems="flex-start">
+								<ListItem key={ user.userId } alignItems="flex-start" sx={{ marginBottom: "20px" }}>
 									<ListItemAvatar>
-										<Avatar alt={ user.name } src={ organizationLogo } />
+										<ImageAvatar src={ user.passport } />
 									</ListItemAvatar>
 
-									<div>
+									<div style={{ marginLeft: "10px" }}>
 										<Typography variant="body1">{ user.name }</Typography>
+										<div style={{ fontSize: "14px", color: "gray", marginBottom: "5px" }}>{ user.title }</div>
 										<Link href={`/admin/manage-roles/${user.userId}`} passHref>
 											<a className='blue-link small-link'>Manage Roles</a>
 										</Link>

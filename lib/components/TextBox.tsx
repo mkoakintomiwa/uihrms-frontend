@@ -6,7 +6,7 @@ export default function TextBox(props: TextBoxProps){
 
     return (
         <Box mb={5}>
-            <TextField  {...props} name={ name } label={ state.label } variant="standard" style={{ width: "100%" }} multiline helperText={ state.helperText } error={ state.error } value={ state.value } onChange={ props.onChange } />
+            <TextField  {...props} name={ name } label={ state.label } variant="standard" style={{ width: "100%" }} multiline helperText={ state.helperText } error={ state.error } value={ state.value } onChange={ props.onChange } spellCheck={ false } />
         </Box>
     )
 }

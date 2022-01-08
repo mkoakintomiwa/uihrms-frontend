@@ -1,10 +1,10 @@
-import { cloneElement, useEffect, useRef, useState } from 'react'
+import { cloneElement, useEffect, useRef, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
 import Main from '../../../lib/components/Main'
 import Head from '../../../lib/system/PageHead'
-import { api, organizationLogo, titleSuffix } from '../../../lib/system/settings'
+import { api, organizationLogo, portalUrl, titleSuffix } from '../../../lib/system/settings'
 import Typography from '@mui/material/Typography'
 import WhiteBox from '../../../lib/components/WhiteBox'
 import PagePreloader from '../../../lib/components/PagePreloader'
@@ -36,30 +36,24 @@ import defaultFormState from '../../../lib/form/defaultFormState'
 import FormSelect from '../../../lib/components/FormSelect'
 import FormImage from '../../../lib/components/FormImage'
 import StatefulForm from '../../../lib/components/StatefulForm'
+import formStateValuesToJson from '../../../lib/form/formStateValuesToJson'
+import { AppContext } from '../../../lib/context/AppContext'
+
 
 const Page: NextPage = () => {
 
 	const [backgroundColor, setBackgroundColor] = useState("white");
     const [pageIsLoading, setPageIsLoading] = useState(true);
     const [addUserIsLoading, setAddUserIsLoading] = useState(false);
+    const router = useRouter();
+    const {contextValue, setContextValue} = useContext(AppContext);
+
+    const { Swal } = contextValue;
 
     const defaultFormObjects: Record<string,FormObject> = {
-        "profile_picture":{
-            label: "Profile Picture (<80kb)",
-            type: "image",
-            maxSize: 80000
-        },
-        "phone":{
-            label: "Phone Number",
-            type: "phone-number"
-        },
-        "username":{
-            label: "Username"
-        },
         "user_type":{
             label: "User Type",
             type: "select",
-            value: "Admin",
             options: {
                 "Admin": "Admin",
                 "Employee": "Employee",
@@ -67,16 +61,30 @@ const Page: NextPage = () => {
                 "Manager": "Manager"
             } 
         },
+        "username":{
+            label: "Username"
+        },
         "name":{
-            label: "Name",
-            value: "Akintomiwa Opemipo"
+            label: "Name"
         },
         "surname":{
             label: "Surname"
         },
+        "title":{
+            label: "Title"
+        },
         "email":{
             label: "Email Address",
             type: "email"
+        },
+        "phone":{
+            label: "Phone Number",
+            type: "phone-number"
+        },
+        "passport":{
+            label: "Passport (<80kb)",
+            type: "image",
+            maxSize: 80000
         }
     };
 
@@ -117,6 +125,8 @@ const Page: NextPage = () => {
                         <WhiteBox style={{ width: "500px" }}>  
                             <Typography variant='h6' sx={{  marginBottom: "15px" }}>Add User</Typography>
 
+                            <div style={{ color: "red", marginBottom: "30px", textAlign: "center" }}>All fields are required</div>
+
                             
                             <Box id="add-user-form" component="form">
                                 
@@ -125,13 +135,24 @@ const Page: NextPage = () => {
                                 
                                 <Center style={{ marginTop: "30px" }}>
                                     <Button variant="contained" disabled={ addUserIsLoading } onClick={e=>{
+                                        setAddUserIsLoading(true);
+                                        topbar.show();
                                         let validation = validateForm(validationRules,formState);
 
-                                        console.log(validation.formState);
-                                        console.log(validation.isValidated);
-                                        
                                         if (validation.isValidated){
-                                            setFormState(defaultFormState(defaultFormObjects));   
+                                            httpPostRequest(`${api}/add-user`, formStateValuesToJson(formState)).then(response=>{
+                                                let { data } = response;
+
+                                                if (!data.error){
+                                                    router.push(`/admin/manage-roles/${data.userId}`);
+                                                }else{
+                                                    Swal.fire({
+                                                        html: <div>{ data.error }</div>,
+                                                        icon: "error"
+                                                    })
+                                                }
+                                            })
+                                            //setFormState(defaultFormState(defaultFormObjects));   
                                         }else{
                                             setFormState(validation.formState);
                                         }

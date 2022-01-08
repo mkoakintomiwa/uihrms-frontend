@@ -40,12 +40,21 @@ type ServerHost = {
 
 
 type User = {
-    userId: string,
-    name: string,
-    surname: string,
-    country: string,
-    phoneNumber: string,
-    startPage: string
+    userId: string;
+
+    name: string;
+
+    surname: string;
+
+    title: string;
+
+    passport: string;
+
+    country: string;
+
+    phoneNumber: string;
+
+    startPage: string;
 }
 
 
