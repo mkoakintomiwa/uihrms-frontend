@@ -151,11 +151,13 @@ const Page: NextPage = () => {
                                                         icon: "error"
                                                     })
                                                 }
+                                                setAddUserIsLoading(true);
                                                 topbar.hide();
                                             })
                                             //setFormState(defaultFormState(defaultFormObjects));   
                                         }else{
                                             setFormState(validation.formState);
+                                            setAddUserIsLoading(true);
                                         }
                                     }} >Add User</Button>
                                 </Center>
