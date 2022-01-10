@@ -17,5 +17,7 @@ export const defaultObject = {
 
     height: "200px",
 
-    options: {}
+    options: {},
+
+    placeholder: ""
 }

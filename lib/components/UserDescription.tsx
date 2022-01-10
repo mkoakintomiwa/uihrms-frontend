@@ -12,8 +12,8 @@ export default function UserDescription(props: UserDescriptionProps){
         <Flex style={{ marginBottom: "20px" }}>
             <ImageAvatar src={ user.passport } />
             <div style={{ marginLeft: "15px" }}>
-                <Typography sx={{ fontSize: "19px" }}>{ user.name }</Typography>
-                <div style={{ fontSize: "14.5px", color: "gray" }}>{ user.title }</div>
+                <Typography sx={{ fontSize: props.nameFontSize || "19px" }}>{ user.name }</Typography>
+            <div style={{ fontSize: "14px", color: "gray" }}>{ user.title }</div>
             </div>
         </Flex>       
     )
@@ -21,4 +21,6 @@ export default function UserDescription(props: UserDescriptionProps){
 
 interface UserDescriptionProps{
     user?: User;
+
+    nameFontSize?: string;
 }

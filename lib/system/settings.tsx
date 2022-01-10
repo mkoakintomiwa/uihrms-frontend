@@ -19,3 +19,5 @@ export var organizationLogo = "/assets/images/ui-logo.jfif";
 export var organizationLogoAspectRatio = 64/75;
 
 export var themeColor = "#2856C3";
+
+export var sidebarTitle = "Human Resources Management, UI";

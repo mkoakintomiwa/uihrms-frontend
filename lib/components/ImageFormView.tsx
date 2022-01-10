@@ -17,7 +17,7 @@ export default function ImageFormView(props: ImageFormViewProps) {
     const [snackBarContent, setSnackBarContent] = useState(<div></div>)
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 	const [placeholderIsDefault, setPlaceholderIsDefault] = useState(!props.value);
-	const [placeholderBase64, setPlaceholderBase64] = useState("");
+	const [placeholder, setPlaceholder] = useState("");
 	const [dragIsOngoing, setDragIsOngoing] = useState(false);
 
     let maxSize = typeof props.maxSize != "undefined" ? props.maxSize : Infinity;
@@ -40,7 +40,7 @@ export default function ImageFormView(props: ImageFormViewProps) {
 		props.onChange(acceptedFiles[0]);
 
         if (acceptedFiles[0].size <= maxSize){
-			setPlaceholderBase64(base64);
+			setPlaceholder(base64);
 			setPlaceholderIsDefault(false);
         }else{
             openSnackBar(true);
@@ -50,6 +50,14 @@ export default function ImageFormView(props: ImageFormViewProps) {
     });
     //console.log();
   }, [props,maxSize]);
+
+
+  useEffect(function(){
+	  
+	if(props.placeholder){
+		setPlaceholder(props.placeholder);
+	}
+  },[props.placeholder])
 
 
   	const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
@@ -87,7 +95,7 @@ export default function ImageFormView(props: ImageFormViewProps) {
 				isDragActive || dragIsOngoing?
      			<Box component="span" sx={{ p: 2, border: '1px dashed grey', width: props.width || "200px", height: props.height || "200px" }}></Box>
 				:
-				<img alt="dragged_image" src={ placeholderBase64 } style= { imageStyle } />
+				<img alt="dragged_image" src={ placeholder } style= { imageStyle } />
 			)}
         </Button>
 
@@ -115,6 +123,8 @@ interface ImageFormViewProps{
 	width?: string;
 
 	height?: string;
+
+	placeholder?: string;
 
 	onChange: (value: File) => void
 }

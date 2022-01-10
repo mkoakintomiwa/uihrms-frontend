@@ -80,9 +80,11 @@ const Page: NextPage = () => {
                         <PagePreloader height="80vh" />
                     ) : (
                         <WhiteBox style={{ width: "500px" }}>  
-                            <Typography variant='h6' sx={{ fontSize: "18px !important", marginBottom: "20px" }}>Manage Roles</Typography>
+                            <Typography variant='h6' sx={{ fontSize: "18px !important", marginBottom: "15px" }}>Manage Roles</Typography>
 
-                            <UserDescription />
+                            <div style={{ marginBottom: "30px" }}>
+                                <UserDescription user={ user } />
+                            </div>
                             
                             {Object.keys(roleGroups).map(roleGroupId=>{
                                 let roleGroup = roleGroups[roleGroupId];

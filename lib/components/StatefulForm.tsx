@@ -52,7 +52,7 @@ export default function StatefulForm(props: StatefulFormProps){
                         return (
                             <FormImage name={ fieldId } key={ key } state={ formObject } onChange={file=>{
                                 setFormState(validationFormState(fieldId, file,validationRules,formState));
-                            }}  />
+                            }} placeholder={ formObject.placeholder } />
                         );
                     break;
                 }

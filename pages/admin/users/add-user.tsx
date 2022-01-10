@@ -151,6 +151,7 @@ const Page: NextPage = () => {
                                                         icon: "error"
                                                     })
                                                 }
+                                                topbar.hide();
                                             })
                                             //setFormState(defaultFormState(defaultFormObjects));   
                                         }else{

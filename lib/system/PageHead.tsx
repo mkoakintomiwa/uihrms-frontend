@@ -21,6 +21,8 @@ export default function PageHead(props: any){
             
             <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
 
+            <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
+
             <link rel='shortcut icon' href={ organizationLogo } />
         </Head>
     )

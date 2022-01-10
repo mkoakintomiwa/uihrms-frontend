@@ -11,7 +11,7 @@ export default function FormImage(props: FormImageProps){
                 <Center>{ state.label }</Center>
                 { state.error ? <Center style={{ color: "#d32f2f" }}>{ state.helperText }</Center> : <></> }
                 <Center>
-                    <ImageFormView value={ state.value } name={ name } maxSize={ state.maxSize! || Infinity } width={ state.width || "200px" } height={ state.height || "200px" } onChange = { props.onChange! } />
+                    <ImageFormView value={ state.value } name={ name } maxSize={ state.maxSize! || Infinity } width={ state.width || "200px" } height={ state.height || "200px" } onChange = { props.onChange! } placeholder={ props.placeholder || "" } />
                 </Center>
             </Center>
         </div>
@@ -38,6 +38,8 @@ interface FormImageProps{
     helperText?: string;
 
     hasPlaceholder?: string;
+
+    placeholder?: string; 
 
     onChange?: (e: File) => void;
 

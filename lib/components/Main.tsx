@@ -12,7 +12,7 @@ import MuiAccordion from '@mui/material/Accordion';
 import CircularPreloader from '../../lib/components/CircularPreloader';
 import Dialog from "@mui/material/Dialog"
 import { Layout } from "antd";
-import { api, portalUrl } from "../system/settings";
+import { api, portalUrl, sidebarTitle } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 import Center from "./Center";
@@ -22,6 +22,7 @@ import { AppContext } from "../context/AppContext";
 import AysDialog from "./AysDialog";
 import addClassName from "../dom/addClassName";
 import Link from "next/link";
+import ImageAvatar from "./ImageAvatar";
 
 
 export default function(props: MainProps){
@@ -112,6 +113,13 @@ export default function(props: MainProps){
 
 
     useEffect(function(){
+        if (contextValue.user){
+            setUser(contextValue.user);
+        }
+    },[contextValue.user])
+
+
+    useEffect(function(){
         if (sidebarActiveElementId){
             let proSidebarLayout = document.getElementsByClassName("pro-sidebar-layout")[0] as HTMLElement;
 
@@ -174,6 +182,27 @@ export default function(props: MainProps){
                     <div style={{ display: "flex" }}>
 
                         <ProSidebar className="sidebar">
+                            
+                            <div style={{ color: "white", textAlign: "center", fontFamily:"Open Sans", marginBottom: "10px" }}>
+                                
+                                <Center style={{ fontFamily: "Montserrat", color: "white", marginTop: "15px", fontSize: "14px" }}>
+                                    <div style={{  maxWidth: "200px", fontWeight: 500 }}>{ sidebarTitle }</div>
+                                </Center>
+
+                                <Center style={{ marginTop: "10px" }}>
+                                    <ImageAvatar src={ user.passport } style={{ height: "70px", width: "70px" }} />
+                                </Center>
+
+                                <Center style={{ marginTop: "10px" }}>
+                                    <div style={{ fontSize: "15px", maxWidth: "250px" }}>{ user.name }</div>
+                                </Center>
+
+                                <Center style={{ marginTop: "3px" }}>
+                                    <div style={{ fontSize: "13px", color: "#c1c1c1", maxWidth: "250px" }}>{ user.title }</div>
+                                </Center>
+
+                            </div>
+
                             <Menu className="sidebar-width" iconShape="circle">
                                 
                                 <MenuItem className={ "/" === router.pathname ? "pro-menu-active" : ""  } icon={AppIcon({

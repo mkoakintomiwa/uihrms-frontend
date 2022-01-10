@@ -44,6 +44,8 @@ type User = {
 
     name: string;
 
+    username: string;
+
     surname: string;
 
     title: string;
@@ -78,6 +80,8 @@ type FormObject = {
     height?: string;
 
     options?: Record<string,string>;
+
+    placeholder?: any
 }
 
 type AdminProperties = {

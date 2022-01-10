@@ -43,9 +43,16 @@ const Page: NextPage = () => {
 									<div style={{ marginLeft: "10px" }}>
 										<Typography variant="body1">{ user.name }</Typography>
 										<div style={{ fontSize: "14px", color: "gray", marginBottom: "5px" }}>{ user.title }</div>
-										<Link href={`/admin/manage-roles/${user.userId}`} passHref>
-											<a className='blue-link small-link'>Manage Roles</a>
-										</Link>
+										<div className="spaced-links">
+											<Link href={`/admin/users/profile/${user.userId}`} passHref>
+												<a className='blue-link small-link'>Update profile</a>
+											</Link>
+
+											<Link href={`/admin/manage-roles/${user.userId}`} passHref>
+												<a className='blue-link small-link'>Manage Roles</a>
+											</Link>
+
+										</div>
 									</div>
 								</ListItem>
 

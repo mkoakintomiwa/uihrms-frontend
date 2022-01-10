@@ -1,6 +1,6 @@
-export default function dataURLtoFile(dataurl: string, filename: string) {
+export default function datauriToFile(datauri: string, filename: string) {
  
-    var arr = dataurl.split(','),
+    var arr = datauri.split(','),
         mime = arr[0].match(/:(.*?);/)![1],
         bstr = atob(arr[1]), 
         n = bstr.length, 

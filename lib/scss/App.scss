@@ -16,6 +16,9 @@ $blue-link: #216fdb;
 
 
 @mixin scrollbar{
+	scrollbar-color: gray white;
+	scrollbar-width: thin;
+
 	&::-webkit-scrollbar {
 		width: 8px!important;
 		height: 6px!important;
@@ -25,7 +28,7 @@ $blue-link: #216fdb;
 	}
 	
     &::-webkit-scrollbar-thumb {
-		background-color: grey;
+		background-color: gray;
 		border-radius: 20px;
 	}
 	
@@ -245,4 +248,9 @@ $rippleColor: white;
 .small-link{
 	font-size: 14px;
 	font-family: "Open Sans";
+}
+
+
+.spaced-links a{
+	margin-right: 10px;
 }
