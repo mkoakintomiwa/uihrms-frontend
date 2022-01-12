@@ -1,6 +1,6 @@
 import * as React from "react"
 
-export default (props: ContainerProps)=>{    
+export default function Flex(props: ContainerProps){    
     let style = { display: "flex", ...props.style }
 
     if (props.alignItems) style["alignItems"] = props.alignItems;

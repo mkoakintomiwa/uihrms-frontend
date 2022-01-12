@@ -23,6 +23,7 @@ import AysDialog from "./AysDialog";
 import addClassName from "../dom/addClassName";
 import Link from "next/link";
 import ImageAvatar from "./ImageAvatar";
+import AppIcon from "./AppIcon";
 
 
 export default function(props: MainProps){
@@ -205,10 +206,7 @@ export default function(props: MainProps){
 
                             <Menu className="sidebar-width" iconShape="circle">
                                 
-                                <MenuItem className={ "/" === router.pathname ? "pro-menu-active" : ""  } icon={AppIcon({
-                                    type: "fas",
-                                    class: "gauge"
-                                })}>
+                                <MenuItem className={ "/" === router.pathname ? "pro-menu-active" : ""  } icon={ <AppIcon type="fas" class="gauge"  /> } >
                                     <Link href="/">Dashboard</Link>
                                 </MenuItem>
 
@@ -374,27 +372,6 @@ export default function(props: MainProps){
     );
 }
 
-
-
-function AppIcon(icon: AppIcon){
-    let appIcon: JSX.Element = <div></div>;
-
-    if (typeof icon != "undefined"){
-        if (["fas","fab"].includes(icon.type)){
-            appIcon = <FontAwesomeIcon icon={[icon.type, icon.class]} />
-        }
-
-        if (icon.type === "link"){
-            appIcon = <img style={{
-                maxWidth: "20px",
-                height: "16px",
-                margin: "0px 5px"
-            }} src={ icon.url } />
-        }
-    }
-
-    return appIcon;
-}
 
 
 function playNotification(){

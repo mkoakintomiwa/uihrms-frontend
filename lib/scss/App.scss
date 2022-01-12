@@ -15,6 +15,11 @@ $blue-link: #216fdb;
 @import '~react-pro-sidebar/dist/scss/styles.scss';
 
 
+body{
+	font-family: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+
+
 @mixin scrollbar{
 	scrollbar-color: gray white;
 	scrollbar-width: thin;
