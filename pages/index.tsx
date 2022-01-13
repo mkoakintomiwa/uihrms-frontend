@@ -32,7 +32,7 @@ const Home: NextPage = () => {
 			charts.lineChart = new Chart(chartContexts.lineChart, {
 				type: 'line',
 				data: {
-					labels: ["Jn", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+					labels: [ "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
 					datasets: [{
 						label: "Earnings",
 						tension: 0.3,
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
 						pointHoverBorderColor: "rgba(78, 115, 223, 1)",
 						pointHitRadius: 10,
 						pointBorderWidth: 2,
-						data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
+						data: [13200, 13500, 12100, 15250, 14900, 13200, 16120, 15500, 14300, 12650, 14250, 15256 ],
 					}],
 				},
 				options: {
@@ -73,7 +73,7 @@ const Home: NextPage = () => {
 						},
 						y: {
 								ticks: {
-								maxTicksLimit: 5,
+								maxTicksLimit: 4,
 								padding: 10,
 								// Include a dollar sign in the ticks
 								callback: function(value, index, values) {
@@ -120,15 +120,17 @@ const Home: NextPage = () => {
 				data: {
 				  labels: ["Direct", "Referral", "Social"],
 				  datasets: [{
-					data: [55, 30, 15],
-					backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-					hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+					data: [60, 40],
+					backgroundColor: [sbAdminThemeColors.primary, sbAdminThemeColors.success],
+					hoverBackgroundColor: [sbAdminThemeColors.primary, sbAdminThemeColors.success],
 					hoverBorderColor: "rgba(234, 236, 244, 1)"
 				  }],
 				},
 				options: {
-				  maintainAspectRatio: false,
-				  plugins:{
+					radius: "70%",
+					responsive: true,
+					maintainAspectRatio: false,
+				  	plugins:{
 					tooltip: {
 						backgroundColor: "rgb(255,255,255)",
 						borderColor: '#dddfeb',
@@ -140,7 +142,7 @@ const Home: NextPage = () => {
 						display: false
 					  }
 				  	},
-					cutout: 125
+					cutout: 80
 				}
 			});
 			
@@ -170,23 +172,29 @@ const Home: NextPage = () => {
 
 					<Grid container spacing={4}>
 						<Grid item lg={3} md={6} flexGrow={1}>
-							<SideColorWhiteBox color="primary" title="EARNINGS (MONTHLY)"  icon={{ type: "fas", class: "calendar" }}>
-								$40,000
+							<SideColorWhiteBox color="primary" title="NUMBER OF STAFFS"  icon={{ type: "fas", class: "users" }}>
+								15,256
 							</SideColorWhiteBox>
 						</Grid>
 
 						<Grid item lg={3} md={6} flexGrow={1}>
-							<SideColorWhiteBox color="success" title="EARNINGS (ANNUAL)"  icon={{ type: "fas", class: "dollar-sign" }}>
-								$215,000
+							<SideColorWhiteBox color="success" title="PENDING PROMOTION"  icon={{ type: "fas", class: "turn-up" }}>
+								72
+							</SideColorWhiteBox>
+						</Grid>
+
+						<Grid item lg={3} md={6} flexGrow={1}>
+							<SideColorWhiteBox color="warning" title="PENDING LEAVES"  icon={{ type: "fas", class: "person-walking" }}>
+								109
 							</SideColorWhiteBox>
 						</Grid>
 
 						<Grid item lg={3} md={6} flexGrow={1}>
 							<SideColorWhiteBox color="info" title="TASKS" icon={{ type: "fas", class: "clipboard-list" }}>
 								<Flex style={{ alignItems: "center" }}>
-									<div>50%</div>
+									<div>63%</div>
 									<div style={{ marginLeft: "10px", width: "100%", paddingRight: "20px" }}>
-										<BorderLinearProgress variant="determinate" value={50} sx={{ [`& .${linearProgressClasses.bar}`]:{
+										<BorderLinearProgress variant="determinate" value={63} sx={{ [`& .${linearProgressClasses.bar}`]:{
 											backgroundColor: `${sbAdminThemeColors.info}`
 										} }} />
 									</div>
@@ -194,18 +202,12 @@ const Home: NextPage = () => {
 							</SideColorWhiteBox>
 						</Grid>
 
-						<Grid item lg={3} md={6} flexGrow={1}>
-							<SideColorWhiteBox color="warning" title="PENDING REQUESTS"  icon={{ type: "fas", class: "comments" }}>
-								19
-							</SideColorWhiteBox>
-						</Grid>
-
 					</Grid>
 
 
-					<Grid container spacing={4} sx={{ marginTop: "20px" }}>
-						<Grid item lg={8}>
-							<ChartBox title='Earnings Overview' chart={
+					<Grid container spacing={2} sx={{ marginTop: "20px" }}>
+						<Grid item lg={8} flexGrow={1}>
+							<ChartBox title='Active Staffs' chart={
 								<canvas ref={ useCallback(function(ctx){
 									setChartContexts(prev=>({ ...prev, lineChart: ctx }))
 								},[]) } style={{ width: "100%", height: "300px", padding: "15px", paddingBottom: "25px" }}></canvas>
@@ -213,20 +215,21 @@ const Home: NextPage = () => {
 						</Grid>
 
 
-						<Grid item lg={4}>
-							<ChartBox title='Revenue Sources' chart={
-								<canvas ref={ useCallback(function(ctx){
-									setChartContexts(prev=>({ ...prev, pieChart: ctx }))
-								},[]) } height={200}></canvas>
+						<Grid item  lg={4} flexGrow={1}>
+							<ChartBox title='Staff Categories' chart={
+								<div style={{ width: "100%", height: "260px" }}>
+									<canvas ref={ useCallback(function(ctx){
+										setChartContexts(prev=>({ ...prev, pieChart: ctx }))
+									},[]) }></canvas>
+								</div>
 							} labelBelow={
 								<Center>
-									<div style={{ fontSize: "13px", color: "gray", marginBottom: "30px", marginTop: "50px" }}>
+									<div style={{ fontSize: "13px", color: "gray", marginBottom: "20px" }}>
 										
-										<ColoredBullet style={{ marginRight: "10px" }} color='primary' label='Direct' />
+										<ColoredBullet style={{ marginRight: "10px" }} color='primary' label='Academic Staffs' />
 
-										<ColoredBullet style={{ marginRight: "10px" }} color='success' label='Social' />
+										<ColoredBullet color='success' label='Non-Academic Staffs' />
 
-										<ColoredBullet color='info' label='Referral' />
 									</div>
 								</Center>
 							} />

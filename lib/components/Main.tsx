@@ -12,7 +12,7 @@ import MuiAccordion from '@mui/material/Accordion';
 import CircularPreloader from '../../lib/components/CircularPreloader';
 import Dialog from "@mui/material/Dialog"
 import { Layout } from "antd";
-import { api, portalUrl, sidebarTitle } from "../system/settings";
+import { api, portalUrl, sidebarTitle, themeColor } from "../system/settings";
 import catchAxiosError from "../network/catchAxiosError";
 import { useRouter } from "next/router";
 import Center from "./Center";
@@ -24,6 +24,13 @@ import addClassName from "../dom/addClassName";
 import Link from "next/link";
 import ImageAvatar from "./ImageAvatar";
 import AppIcon from "./AppIcon";
+import Fab from "@mui/material/Fab";
+import MenuIcon from "@mui/icons-material/Menu"
+import AppBar from "@mui/material/AppBar";
+import Typography from "@mui/material/Typography/Typography";
+import Button from "@mui/material/Button";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
 
 
 export default function(props: MainProps){
@@ -32,7 +39,7 @@ export default function(props: MainProps){
 
 
     const theme = useTheme();
-    const isMobileScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobileScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [swipeableDrawerAnchor, setSwipeableDrawerAnchor ] = useState("left" as "top" | "right" | "bottom" | "left");
     const [swipeableDrawerIsVisible, showSwipeableDrawer] = useState(false);
     const [swipeableDrawerContent, setSwipeableDrawerContent] = useState(<div></div>);
@@ -47,6 +54,7 @@ export default function(props: MainProps){
     const [appIsLoading, setAppIsLoading] = useState(true);
     const [menuItems, setMenuItems] = useState({} as Record<string,any>);
     const [user, setUser] = useState({} as any);
+    const [sidebarIsOpened, openSidebar] = useState(false);
 
     let backgroundColor = props.backgroundColor || "#efefef";
     
@@ -182,7 +190,9 @@ export default function(props: MainProps){
                 
                     <div style={{ display: "flex" }}>
 
-                        <ProSidebar className="sidebar">
+                        <ProSidebar className="sidebar" breakPoint="md" toggled={ sidebarIsOpened } onToggle={isOpened=>{
+                            openSidebar(isOpened);
+                        }}>
                             
                             <div style={{ color: "white", textAlign: "center", fontFamily:"Open Sans", marginBottom: "10px" }}>
                                 
@@ -332,11 +342,35 @@ export default function(props: MainProps){
                     </div>
 
                     {pageContentIsVisible?(
+                        <>  {isMobileScreen?(
+                            <Box sx={{ flexGrow: 1, position: "fixed", top: 0 }}>
+                                <AppBar sx={{ color: "white", backgroundColor: themeColor }}>
+                                <Toolbar>
+                                    <IconButton
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="menu"
+                                        sx={{ mr: 2 }}
+                                        onClick={e=>{
+                                            openSidebar(true);
+                                        }}
+                                    >
+                                    <MenuIcon />
+                                    </IconButton>
+                                </Toolbar>
+                                </AppBar>
+                            </Box>
+                        ):(
+                            <div></div>
+                        )}
+                                
                         <div id="page-content"  className="overflow-scroll" style={{ maxHeight: "100vh", height: "100vh", overflowY: "auto", "width": "100%", backgroundColor }}>
-                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px" }}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", "padding": pagePadding ? "30px": "0px", marginTop: isMobileScreen?"50px":"0px" }}>
                                 { props.children }
                             </div>
                         </div>
+                        </>
                     ):<></>}
                 
                 </div>
