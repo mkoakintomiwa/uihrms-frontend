@@ -32,7 +32,6 @@ import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 
-
 export default function(props: MainProps){
 
     let pagePadding =  typeof props.pagePadding != "undefined" ? props.pagePadding : true;

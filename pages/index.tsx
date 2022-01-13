@@ -170,7 +170,7 @@ const Home: NextPage = () => {
 				<div id="main-content" style={{ width: "100%" }}>
 					<Typography variant="h5" sx={{ fontSize: "25px", marginBottom: "20px" }}>Dashboard</Typography>
 
-					<Grid container spacing={4}>
+					<Grid container spacing={3}>
 						<Grid item lg={3} md={6} flexGrow={1}>
 							<SideColorWhiteBox color="primary" title="NUMBER OF STAFFS"  icon={{ type: "fas", class: "users" }}>
 								15,256
