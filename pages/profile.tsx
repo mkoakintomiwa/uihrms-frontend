@@ -47,6 +47,7 @@ import WhiteBarSpinner from '../lib/components/WhiteBarSpinner'
 import CheckIcon from "@mui/icons-material/Check"
 import SpaceBetween from '../lib/components/SpaceBetween'
 import { useSnackbar } from 'notistack';
+import IsMobileScreen from '../lib/browser/IsMobileScreen'
 
 
 const Page: NextPage = () => {
@@ -79,6 +80,8 @@ const Page: NextPage = () => {
             error: false
         },
     })
+
+    const isMobileScreen = IsMobileScreen();
 
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -220,7 +223,7 @@ const Page: NextPage = () => {
 			<Main backgroundColor={ backgroundColor }>
                 <div>
 					{ !pageIsLoading?(
-                        <WhiteBox style={{ width: "500px" }}>  
+                        <WhiteBox style={{ width: isMobileScreen?"90vw": "500px" }}>  
                             <Typography variant='h6' sx={{  marginBottom: "15px" }}>Update Profile</Typography>
                             
 
