@@ -265,6 +265,8 @@ export default function(props: MainProps){
                                                     
                                                     return <MenuItem id={`submenu-${submenuRoleId}`} className={ submenuRole.route === router.pathname ? "pro-menu-active" : ""  } key={`submenu-${submenuRoleId}`} onClick={e=>{
                                                         
+                                                        topbar.show();
+
                                                         contextValue.sidebarState.menu[roleId]['selected'] = submenuRoleId;
                                                         
                                                         setContextValue(contextValue);
@@ -288,6 +290,7 @@ export default function(props: MainProps){
 
                                         menuItemElement = (
                                             <MenuItem id={`menu-${roleId}`} className={ menu.route === router.pathname ? "pro-menu-active" : ""  } key={`menu-${roleId}`} icon={ AppIcon(menu.icon) } onClick={e=>{
+                                                topbar.show();
                                                 // if (menu.route){
                                                 //     router.push(menu.route);
                                                 // }

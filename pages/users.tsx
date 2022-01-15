@@ -20,51 +20,6 @@ import ImageAvatar from '../lib/components/ImageAvatar'
 import getCookie from '../lib/server/getCookie'
 
 const Page: NextPage = (props: any) => {
-	
-	const [pageContent, setPageContent] = useState(<PagePreloader height="80vh" />)
-	const [backgroundColor, setBackgroundColor] = useState("");
-
-	// useEffect(function(){
-	// 	httpPostRequest("https://uihrms.icitifysolution.com/api/users").then(response=>{
-	// 		setBackgroundColor("");
-			
-	// 		const users: User[] = response.data;
-			
-	// 		setPageContent(
-	// 			<WhiteBox style={{ width: "500px" }}>  
-	// 				<Typography variant='h5'>Users</Typography>
-					
-	// 				<List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-	// 					{users.map(user=>{
-	// 						return (	
-	// 							<ListItem key={ user.userId } alignItems="flex-start" sx={{ marginBottom: "20px" }}>
-	// 								<ListItemAvatar>
-	// 									<ImageAvatar src={ user.passport } />
-	// 								</ListItemAvatar>
-
-	// 								<div style={{ marginLeft: "10px" }}>
-	// 									<Typography variant="body1">{ user.name }</Typography>
-	// 									<div style={{ fontSize: "14px", color: "gray", marginBottom: "5px" }}>{ user.title }</div>
-	// 									<div className="spaced-links">
-	// 										<Link href={`/admin/users/profile/${user.userId}`} passHref>
-	// 											<a className='blue-link small-link'>Update profile</a>
-	// 										</Link>
-
-	// 										<Link href={`/admin/manage-roles/${user.userId}`} passHref>
-	// 											<a className='blue-link small-link'>Manage Roles</a>
-	// 										</Link>
-
-	// 									</div>
-	// 								</div>
-	// 							</ListItem>
-
-	// 						);	
-	// 					})}
-	// 				</List>	
-	// 			</WhiteBox>
-	// 		)
-	// 	});
-	// },[]);
 
 	return (
 		<>
@@ -117,7 +72,7 @@ export async function getServerSideProps({ req }: any){
 	let users = {};
 	if (cookie){
 		let token = getCookie("token",req.headers.cookie) || "";
-		let response = await httpServerPostRequest("https://uihrms.icitifysolution.com/api/users",token);
+		let response = await httpServerPostRequest(`${api}/users`,token);
 		users = response.data;
 	}
 
