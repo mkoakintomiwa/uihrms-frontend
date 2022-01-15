@@ -4,8 +4,6 @@ declare var relDirname: string;
 
 declare var ajax: string;
 
-declare var api: string;
-
 declare var user: User;
 
 declare var websockets: string;
