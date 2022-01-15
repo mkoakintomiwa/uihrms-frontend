@@ -1,7 +1,7 @@
 import axios from "axios";
-import getCookie from "../browser/getCookie";
+import FormData from "form-data"
 
-export default function httpPostRequest(endpointUrl: string, data: Record<string, any> = {}, headers: Record<string, any> = {}){
+export default function httpPostRequest(endpointUrl: string, token: string, data: Record<string, any> = {}, headers: Record<string, any> = {}){
     var formdata = new FormData();
 
     for(let [key,value] of Object.entries(data)){
@@ -12,14 +12,10 @@ export default function httpPostRequest(endpointUrl: string, data: Record<string
         "content-Type":"multipart/form-data",
         ...headers
     };
-
-    let token = getCookie("token");
-
-    if (token){
-        headers = {
-            ...headers,
-            'Authorization': `Bearer ${token}`
-        }
+    
+    headers = {
+        ...headers,
+        'Authorization': `Bearer ${token}`
     }
 
     return axios({

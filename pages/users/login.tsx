@@ -21,6 +21,7 @@ import { organizationLogo, portalUrl } from '../../lib/system/settings';
 import { useRouter } from 'next/router';
 import Head from '../../lib/system/PageHead';
 import { titleSuffix } from '../../lib/system/settings';
+import setCookie from '../../lib/browser/setCookie';
 
 
 const Alert = React.forwardRef(function Alert(props, ref: any) {
@@ -73,7 +74,7 @@ const Home: NextPage = () => {
             if (!data.error){
                 setSnackbarSeverity("success");
                 setSnackBarContent(<div>Login successful</div>);
-                localStorage.setItem("token",data.token);
+                setCookie("token",data.token,365*100);
                 router.push("/")
         
             }else{

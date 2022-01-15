@@ -31,6 +31,7 @@ import Typography from "@mui/material/Typography/Typography";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
+import deleteCookie from "../browser/deleteCookie";
 
 export default function(props: MainProps){
 
@@ -91,19 +92,23 @@ export default function(props: MainProps){
             httpPostRequest(`${api}/login-status`).then(response=>{
                 let user = response.data;
                 contextValue.user = user;
-                if (user.isLoggedIn){
-                    //document.title = `${user.name} | ${titleSuffix}`;
-                    httpPostRequest(`${api}/menu-items`).then(response=>{
-                        let menuItems = response.data;
-                        contextValue.menuItems = menuItems;
-                        contextValue.initialLoadIsReady = true;
-                        setContextValue(contextValue);
-                        setAppIsLoading(false);
-                        setUser(user);
-                        setMenuItems(menuItems);
-                        showPageContent(true);
-                    });
-    
+                if (!user.error){
+                    if (user.isLoggedIn){
+                        //document.title = `${user.name} | ${titleSuffix}`;
+                        httpPostRequest(`${api}/menu-items`).then(response=>{
+                            let menuItems = response.data;
+                            contextValue.menuItems = menuItems;
+                            contextValue.initialLoadIsReady = true;
+                            setContextValue(contextValue);
+                            setAppIsLoading(false);
+                            setUser(user);
+                            setMenuItems(menuItems);
+                            showPageContent(true);
+                        });
+        
+                    }else{
+                        router.push("/users/login");
+                    }
                 }else{
                     router.push("/users/login");
                 }
@@ -317,7 +322,7 @@ export default function(props: MainProps){
                                                 setAppIsLoading(true);
                                     
                                                 httpPostRequest(`${api}/logout`).then(response=>{
-                                                    localStorage.removeItem("token");
+                                                    deleteCookie("token");
                                                     router.push("/users/login");
                                                 });
                                                 setContextValue({} as any);
